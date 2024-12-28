@@ -32,3 +32,6 @@ yarn-error.log
 
 # Ignore local setup for development
 appsettings.Development.json
+
+# Ignoriši TypeScript build informacije
+*.tsbuildinfo
