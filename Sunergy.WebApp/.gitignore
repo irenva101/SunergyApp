@@ -1,0 +1,14 @@
+# .NET Core build output
+/bin/
+/obj/
+
+# User-specific files
+.user
+.vs/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
