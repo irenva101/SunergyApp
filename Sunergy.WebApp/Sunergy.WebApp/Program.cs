@@ -1,5 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+{
+    builder.SetIsOriginAllowed(origin => true)
+           .AllowAnyHeader()
+           .AllowAnyMethod()
+           .AllowCredentials();
+})
+);
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -8,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors("MyPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sunergy.Shared.DTOs.User.DataIn;
 
 namespace Sunergy.WebApp.Controllers
 {
@@ -10,9 +9,9 @@ namespace Sunergy.WebApp.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginDataIn dataIn)
+        public async Task<IActionResult> Login()
         {
-            return Ok(dataIn);
+            return Ok();
         }
     }
 }
