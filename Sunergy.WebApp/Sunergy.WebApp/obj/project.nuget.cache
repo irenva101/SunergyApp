@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "i28Qc71gWjj8CmvIU9GrT8q3R2n4QGs+M1PFxIugvYvBLSbqDfm3jclPlC2HpfNH+mtSJeYvRdZNqgr0U3UKBQ==",
+  "dgSpecHash": "o0cyPltJ+tGDj2pvcLeKbFQJzlmGv9G25/eCsjA3fNJ2RQ4JWrHef+8BBCDioa0oRx71e/vzm2chg/cMceeKBg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\irenv\\Desktop\\Sunergy.WebApp\\Sunergy.WebApp\\Sunergy.WebApp.csproj",
+  "projectFilePath": "C:\\Users\\irenv\\Desktop\\SunergyApp\\Sunergy.WebApp\\Sunergy.WebApp\\Sunergy.WebApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\irenv\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\irenv\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

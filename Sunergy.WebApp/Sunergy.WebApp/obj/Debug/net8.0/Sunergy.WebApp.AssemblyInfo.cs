@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sunergy.WebApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd9f08b98ecad3be942801768612b1cb629a4438")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+03ec3f73a7cd45c55f868ce1c01c8ffe38381dd8")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sunergy.WebApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sunergy.WebApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
