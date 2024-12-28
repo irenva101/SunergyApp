@@ -1,46 +1,34 @@
-# BE
-
-bin/
-obj/
-
-# User-specific files
-*.user
-*.suo
-
-# Visual Studio-specific
-.vs/
-
-# Log files
-*.log
-
-# NuGet packages
-*.nupkg
-packages/
-
-# Configuration files
-appsettings.*.json
-
-# Temporary files
-*.tmp
-
-#FE
+# Node.js modules
+**/node_modules/
 
 # Angular build output
-dist/
-out-tsc/
+**/dist/
+**/out-tsc/
 
-# Node modules
-node_modules/
+# .NET Core build output
+**/bin/
+**/obj/
 
-# Environment files
-src/environments/environment.*.ts
-
-# IDE specific
+# IDE configurations
 .idea/
 .vscode/
 
-# Logs and temp files
-*.log
-*.tmp
-*.lock
+# OS-specific files
+.DS_Store
+Thumbs.db
 
+# Log files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Other unnecessary files
+**/package-lock.json
+**/npm-debug.log
+**/yarn.lock
+
+# Ignore local config in VS 
+*.user
+
+# Ignore local setup for development
+appsettings.Development.json
