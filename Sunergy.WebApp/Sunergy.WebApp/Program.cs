@@ -1,3 +1,5 @@
+using Sunergy.Data.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
@@ -9,7 +11,7 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 })
 );
 
-
+builder.Services.AddTransient<SolarContext>();
 // Add services to the container.
 
 builder.Services.AddControllers();

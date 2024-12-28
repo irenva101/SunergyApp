@@ -36,9 +36,9 @@ appsettings.Development.json
 # Ignoriši TypeScript build informacije
 *.tsbuildinfo
 
-
 *.sln
-
-
 *.csproj
 Sunergy.WebApp/Sunergy.WebApp/Sunergy.WebApp.csproj
+
+
+
