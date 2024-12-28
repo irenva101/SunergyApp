@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "i28Qc71gWjj8CmvIU9GrT8q3R2n4QGs+M1PFxIugvYvBLSbqDfm3jclPlC2HpfNH+mtSJeYvRdZNqgr0U3UKBQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\irenv\\Desktop\\Sunergy.WebApp\\Sunergy.WebApp\\Sunergy.WebApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\irenv\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\irenv\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\irenv\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\irenv\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\irenv\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\irenv\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
