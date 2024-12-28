@@ -1,1 +1,46 @@
+# BE
+
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Visual Studio-specific
 .vs/
+
+# Log files
+*.log
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Configuration files
+appsettings.*.json
+
+# Temporary files
+*.tmp
+
+#FE
+
+# Angular build output
+dist/
+out-tsc/
+
+# Node modules
+node_modules/
+
+# Environment files
+src/environments/environment.*.ts
+
+# IDE specific
+.idea/
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.lock
+
