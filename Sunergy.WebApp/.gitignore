@@ -12,3 +12,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Ignore Visual Studio solution files
+*.sln
