@@ -17,7 +17,7 @@ namespace Sunergy.Data.Context
 
         }
         public DbSet<User> Users { get; set; }
-        public DbSet<SolarPanel> Panels { get; set; }
+        public DbSet<SolarPowerPlant> PowerPlants { get; set; }
         public DbSet<WeatherState> States { get; set; }
 
     }

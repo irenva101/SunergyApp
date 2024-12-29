@@ -9,6 +9,6 @@ namespace Sunergy.Data.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Role Role { get; set; }
-        public List<SolarPanel> SolarPanels { get; set; }
+        public List<SolarPowerPlant> SolarPanels { get; set; }
     }
 }
