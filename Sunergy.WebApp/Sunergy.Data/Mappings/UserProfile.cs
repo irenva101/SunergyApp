@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Sunergy.Data.Model;
+using Sunergy.Shared.DTOs.User.DataOut;
 
 namespace Sunergy.Data.Mappings
 {
