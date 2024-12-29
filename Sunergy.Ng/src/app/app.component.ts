@@ -9,17 +9,6 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Sunergy.Ng';
-
-  constructor(private client: Client){
-    
-  }
-  ngOnInit(): void {
-    this.client.login().subscribe({
-      next: (response) => {
-        console.log(response);
-      }
-    });
-  }
 }

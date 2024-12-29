@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row g-0 m-0 d-flex justify-content-md-center">
+    <div class="col-md-12 rounded border p-4">
+      <form (submit)="onSubmit()" #crudform="ngForm">
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.firstName"
+            #firstName="ngModel"
+            id="firstName"
+            aria-describedby="text"
+            required
+          />
+        </div>
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.lastName"
+            id="lastName"
+            #lastName="ngModel"
+            aria-describedby="text"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label"
+            >Email address</label
+          >
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            [(ngModel)]="data.email"
+            #email="ngModel"
+            aria-describedby="emailHelp"
+            required
+          />
+          <div id="emailHelp" class="form-text">
+            We'll never share your email with anyone else.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            #password="ngModel"
+            [(ngModel)]="data.password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
