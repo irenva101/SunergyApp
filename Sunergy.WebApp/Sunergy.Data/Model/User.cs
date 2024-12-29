@@ -1,4 +1,6 @@
-﻿namespace Sunergy.Data.Model
+﻿using Sunergy.Shared.Constants;
+
+namespace Sunergy.Data.Model
 {
     public class User : Entity
     {

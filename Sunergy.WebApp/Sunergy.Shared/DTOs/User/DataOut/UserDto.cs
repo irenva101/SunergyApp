@@ -1,4 +1,4 @@
-﻿using Sunergy.Data.Model;
+﻿using Sunergy.Shared.Constants;
 
 namespace Sunergy.Shared.DTOs.User.DataOut
 {

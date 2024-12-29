@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sunergy.Data\Sunergy.Data.csproj" />
     <ProjectReference Include="..\Sunergy.Shared\Sunergy.Shared.csproj" />
   </ItemGroup>
 
