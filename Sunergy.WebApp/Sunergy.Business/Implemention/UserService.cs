@@ -60,6 +60,7 @@ namespace Sunergy.Business.Implemention
                 tempUser.FirstName = dataIn.FirstName;
                 tempUser.LastName = dataIn.LastName;
                 tempUser.Role = dataIn.Role;
+                tempUser.LastUpdateTime = DateTime.Now;
             }
             else
             {
@@ -74,7 +75,8 @@ namespace Sunergy.Business.Implemention
                     LastName = dataIn.LastName,
                     Password = dataIn.Password,
                     Email = dataIn.Email,
-                    Role = dataIn.Role
+                    Role = dataIn.Role,
+                    LastUpdateTime = DateTime.Now,
                 };
                 await _dbContext.Users.AddAsync(user);
             }
