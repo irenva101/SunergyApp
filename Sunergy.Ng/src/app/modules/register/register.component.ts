@@ -3,7 +3,7 @@ import { Client, RegisterDataIn } from '../../api/api-reference';
 import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { Route, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +18,7 @@ export class RegisterComponent {
   onSubmit() {
     this.client.register(this.data).subscribe({
       next: (response) => {
-        this.toastr.success('U have successfully registered.');
+        this.toastr.success('You have successfully registered.');
         this.router.navigate(['/login']);
       },
       error: (err) => {

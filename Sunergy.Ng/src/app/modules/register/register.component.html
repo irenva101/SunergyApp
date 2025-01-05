@@ -9,7 +9,7 @@
             class="form-control"
             [(ngModel)]="data.firstName"
             #firstName="ngModel"
-            id="firstName"
+            name="firsName"
             aria-describedby="text"
             required
           />
@@ -20,7 +20,7 @@
             type="text"
             class="form-control"
             [(ngModel)]="data.lastName"
-            id="lastName"
+            name="lastName"
             #lastName="ngModel"
             aria-describedby="text"
             required
@@ -33,9 +33,9 @@
           <input
             type="email"
             class="form-control"
-            id="email"
             [(ngModel)]="data.email"
             #email="ngModel"
+            name="email"
             aria-describedby="emailHelp"
             required
           />
@@ -48,13 +48,16 @@
           <input
             type="password"
             class="form-control"
-            id="password"
             #password="ngModel"
+            name="password"
             [(ngModel)]="data.password"
             required
           />
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="d-flex justify-content-md-between">
+          <button type="submit" class="btn btn-yellow col-md-3">Submit</button>
+          <button type="button" class="btn btn-yellow col-md-7" routerLink="/login">Have an account? Log in</button>
+        </div>
       </form>
     </div>
   </div>
