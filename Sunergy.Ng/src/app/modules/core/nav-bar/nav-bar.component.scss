@@ -1,0 +1,14 @@
+.nav-tabs {
+  padding-left: 5rem;
+}
+
+.active-tab {
+  color: rgba(138, 130, 19, 0.863) !important;
+  background-color: var(--bs-nav-tabs-link-active-bg);
+  border-color: var(--bs-nav-tabs-link-active-border-color);
+}
+
+.nav-link {
+  color: rgba(224, 209, 0, 0.863);
+  color: var(--bs-nav-tabs-link-active-color);
+}

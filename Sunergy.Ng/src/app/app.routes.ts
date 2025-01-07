@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './modules/core/dashboard/dashboard.component';
+import { NavBarComponent } from './modules/core/nav-bar/nav-bar.component';
 import { RegisterComponent } from './modules/register/register.component';
 import { LoginComponent } from './modules/login/login.component';
 import { PrivateLayoutComponent } from './private-layout/private-layout.component';
 import { HomeComponent } from './home/home.component';
+import { LogoutComponent } from './modules/modals/logout/logout.component';
+import { MapComponent } from './modules/map/map.component';
 
 export const routes: Routes = [
     {
@@ -16,9 +18,22 @@ export const routes: Routes = [
         component: PrivateLayoutComponent,
         children: [
             {
+                path:'dashboard',
+                component: NavBarComponent,
+            },
+            {
                 path:'home',
                 component: HomeComponent,
             },
+            {
+                path:'logout',
+                component: LogoutComponent,
+            },
+            {
+                path:'map',
+                component: MapComponent,
+            },
+
         ],
     },
     {
