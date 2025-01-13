@@ -11,9 +11,8 @@ namespace Sunergy.Data.Model
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         public User User { get; set; }
-        public List<WeatherState> WeatherStates { get; set; }
+        public List<PanelWeather> PanelWeathers { get; set; }
         public DateTime Created { get; set; }
-
         public PanelType PanelType { get; set; }
 
     }

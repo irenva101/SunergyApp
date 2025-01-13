@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sunergy.Data.Context;
 
@@ -11,9 +12,11 @@ using Sunergy.Data.Context;
 namespace Sunergy.Data.Migrations
 {
     [DbContext(typeof(SolarContext))]
-    partial class SolarContextModelSnapshot : ModelSnapshot
+    [Migration("20250113183519_AddedPanelWeatherAndPanelWeatherHoursTable")]
+    partial class AddedPanelWeatherAndPanelWeatherHoursTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
