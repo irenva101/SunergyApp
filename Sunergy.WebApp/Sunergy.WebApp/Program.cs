@@ -28,8 +28,10 @@ builder.Services.AddTransient<SolarContext>();
 // Add services to the container.
 builder.Services.AddTransient<IMD5Service, MD5Service>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IPanelService, PanelService>();
 
 //Mappings
+builder.Services.AddAutoMapper(typeof(PanelProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 
 builder.Services.AddControllers();

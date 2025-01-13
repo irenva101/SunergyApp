@@ -27,6 +27,20 @@ export interface IClient {
      */
     register(body: RegisterDataIn | undefined): Observable<void>;
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    query(body: StringDataIn | undefined): Observable<void>;
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    save(body: PanelDataIn | undefined): Observable<void>;
+    /**
+     * @return Success
+     */
+    delete(panelId: number): Observable<void>;
+    /**
      * @return Success
      */
     getWeatherForecast(): Observable<WeatherForecast[]>;
@@ -131,6 +145,160 @@ export class Client implements IClient {
     }
 
     protected processRegister(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    query(body: StringDataIn | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/PowePlant/query";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processQuery(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processQuery(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processQuery(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    save(body: PanelDataIn | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/PowePlant/save";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSave(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSave(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSave(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    delete(panelId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/PowePlant/delete/{panelId}";
+        if (panelId === undefined || panelId === null)
+            throw new Error("The parameter 'panelId' must be defined.");
+        url_ = url_.replace("{panelId}", encodeURIComponent("" + panelId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -314,6 +482,62 @@ export interface ILoginDataIn {
     password?: string | undefined;
 }
 
+export class PanelDataIn implements IPanelDataIn {
+    id?: number | undefined;
+    name?: string | undefined;
+    installedPower?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+
+    constructor(data?: IPanelDataIn) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.installedPower = _data["installedPower"];
+            this.efficiency = _data["efficiency"];
+            this.longitude = _data["longitude"];
+            this.latitude = _data["latitude"];
+        }
+    }
+
+    static fromJS(data: any): PanelDataIn {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelDataIn();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["installedPower"] = this.installedPower;
+        data["efficiency"] = this.efficiency;
+        data["longitude"] = this.longitude;
+        data["latitude"] = this.latitude;
+        return data;
+    }
+}
+
+export interface IPanelDataIn {
+    id?: number | undefined;
+    name?: string | undefined;
+    installedPower?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+}
+
 export class RegisterDataIn implements IRegisterDataIn {
     email?: string | undefined;
     password?: string | undefined;
@@ -360,6 +584,50 @@ export interface IRegisterDataIn {
     password?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+}
+
+export class StringDataIn implements IStringDataIn {
+    pageSize?: number;
+    currentPage?: number;
+    data?: string | undefined;
+
+    constructor(data?: IStringDataIn) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pageSize = _data["pageSize"];
+            this.currentPage = _data["currentPage"];
+            this.data = _data["data"];
+        }
+    }
+
+    static fromJS(data: any): StringDataIn {
+        data = typeof data === 'object' ? data : {};
+        let result = new StringDataIn();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageSize"] = this.pageSize;
+        data["currentPage"] = this.currentPage;
+        data["data"] = this.data;
+        return data;
+    }
+}
+
+export interface IStringDataIn {
+    pageSize?: number;
+    currentPage?: number;
+    data?: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {
