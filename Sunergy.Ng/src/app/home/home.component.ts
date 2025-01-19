@@ -25,14 +25,14 @@ export class HomeComponent {
   }
 
   reloadTable() {
-    this.client.save(this.requestData).subscribe({
-      next:(response)=>{
-        this.data=response;
-      },
-      error:(err)=>{
-        this.toastr.error("Something went wrong:" + err);
-      }
-    })
+    // this.client.save(this.requestData).subscribe({
+    //   next:(response)=>{
+    //     this.data=response;
+    //   },
+    //   error:(err)=>{
+    //     this.toastr.error("Something went wrong:" + err);
+    //   }
+    // })
   }
 
 }
