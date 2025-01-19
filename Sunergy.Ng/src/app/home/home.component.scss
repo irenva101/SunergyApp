@@ -8,6 +8,7 @@
   background-color: #f9f9f9;
   transition: transform 0.2s, box-shadow 0.2s;
   font-size: 1.25rem;
+  cursor: pointer;
 }
 
 .box-generated-sum:hover,
@@ -30,4 +31,5 @@
 .second-block {
   background-color: #c1d0e9;
   border-radius: 1rem;
+  padding: 1rem;
 }

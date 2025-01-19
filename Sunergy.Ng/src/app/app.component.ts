@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Client } from './api/api-reference';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',

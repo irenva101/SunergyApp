@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Sunergy.Business.Interface;
 using Sunergy.Data.Context;
 using Sunergy.Data.Model;
@@ -38,8 +37,7 @@ namespace Sunergy.Business.Implemention
         public async Task<ResponsePackage<List<PanelDto>>> Query(DataIn<string> dataIn, int? userId, Role? role)
         {
             var allPanels = _dbContext.PowerPlants.Where(x => x.IsDeleted == false);
-            if (!dataIn.Data.IsNullOrEmpty())
-                allPanels = allPanels.Where(x => x.Name.ToUpper().Contains(dataIn.Data.ToUpper()));
+
             if (role != null && role == Role.User)
                 allPanels = allPanels.Where(x => x.UserId == userId);
 
@@ -55,7 +53,6 @@ namespace Sunergy.Business.Implemention
                 Status = ResponseStatus.OK,
                 Data = dataDto,
             };
-
         }
 
         public async Task<ResponsePackageNoData> Save(PanelDataIn dataIn, int? userId)

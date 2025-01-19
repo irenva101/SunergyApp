@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Sunergy.Business.Implemention;
 using Sunergy.Business.Interface;
 using Sunergy.Data.Context;
 using Sunergy.Data.Mappings;
+using Sunergy.WebApp.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SunergyDb");
@@ -15,6 +17,11 @@ builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
            .AllowCredentials();
 })
 );
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = JwtManager.GetTokenValidationParameters();
+});
 builder.Services.AddDbContext<SolarContext>(x => x.UseSqlServer(connectionString,
     opts =>
     {

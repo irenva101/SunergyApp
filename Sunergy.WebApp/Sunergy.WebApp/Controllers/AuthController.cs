@@ -19,6 +19,7 @@ namespace Sunergy.WebApp.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 200)]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDataIn dataIn)
         {

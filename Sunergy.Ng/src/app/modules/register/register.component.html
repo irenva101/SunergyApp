@@ -3,7 +3,7 @@
     <div class="col-md-12 rounded border p-4">
       <form (submit)="onSubmit()" #crudform="ngForm">
         <div class="mb-3">
-            <label for="firstName" class="form-label">First Name</label>
+            <label id="firstName" class="form-label">First Name</label>
             <input
             type="text"
             class="form-control"
@@ -15,7 +15,7 @@
           />
         </div>
         <div class="mb-3">
-            <label for="lastName" class="form-label">Last Name</label>
+            <label id="lastName" class="form-label">Last Name</label>
             <input
             type="text"
             class="form-control"
@@ -27,7 +27,7 @@
           />
         </div>
         <div class="mb-3">
-          <label for="email" class="form-label"
+          <label id="email" class="form-label"
             >Email address</label
           >
           <input
@@ -44,7 +44,7 @@
           </div>
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
+          <label id="password" class="form-label">Password</label>
           <input
             type="password"
             class="form-control"

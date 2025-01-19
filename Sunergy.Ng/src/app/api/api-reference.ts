@@ -20,7 +20,7 @@ export interface IClient {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginDataIn | undefined): Observable<void>;
+    login(body: LoginDataIn | undefined): Observable<StringResponsePackage>;
     /**
      * @param body (optional) 
      * @return Success
@@ -30,7 +30,7 @@ export interface IClient {
      * @param body (optional) 
      * @return Success
      */
-    query(body: StringDataIn | undefined): Observable<void>;
+    query(body: StringDataIn | undefined): Observable<PanelDtoListResponsePackage>;
     /**
      * @param body (optional) 
      * @return Success
@@ -63,7 +63,7 @@ export class Client implements IClient {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginDataIn | undefined): Observable<void> {
+    login(body: LoginDataIn | undefined): Observable<StringResponsePackage> {
         let url_ = this.baseUrl + "/api/Auth/login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -75,6 +75,7 @@ export class Client implements IClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             })
         };
 
@@ -85,14 +86,14 @@ export class Client implements IClient {
                 try {
                     return this.processLogin(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
         }));
     }
 
-    protected processLogin(response: HttpResponseBase): Observable<void> {
+    protected processLogin(response: HttpResponseBase): Observable<StringResponsePackage> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -101,7 +102,10 @@ export class Client implements IClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -167,7 +171,7 @@ export class Client implements IClient {
      * @param body (optional) 
      * @return Success
      */
-    query(body: StringDataIn | undefined): Observable<void> {
+    query(body: StringDataIn | undefined): Observable<PanelDtoListResponsePackage> {
         let url_ = this.baseUrl + "/api/PowePlant/query";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -179,6 +183,7 @@ export class Client implements IClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             })
         };
 
@@ -189,14 +194,14 @@ export class Client implements IClient {
                 try {
                     return this.processQuery(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<PanelDtoListResponsePackage>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<PanelDtoListResponsePackage>;
         }));
     }
 
-    protected processQuery(response: HttpResponseBase): Observable<void> {
+    protected processQuery(response: HttpResponseBase): Observable<PanelDtoListResponsePackage> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -205,7 +210,21 @@ export class Client implements IClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PanelDtoListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -538,6 +557,122 @@ export interface IPanelDataIn {
     latitude?: number | undefined;
 }
 
+export class PanelDto implements IPanelDto {
+    id?: number | undefined;
+    name?: string | undefined;
+    power?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+    userId?: number | undefined;
+    user?: UserDto;
+
+    constructor(data?: IPanelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.power = _data["power"];
+            this.efficiency = _data["efficiency"];
+            this.longitude = _data["longitude"];
+            this.latitude = _data["latitude"];
+            this.userId = _data["userId"];
+            this.user = _data["user"] ? UserDto.fromJS(_data["user"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PanelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["power"] = this.power;
+        data["efficiency"] = this.efficiency;
+        data["longitude"] = this.longitude;
+        data["latitude"] = this.latitude;
+        data["userId"] = this.userId;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IPanelDto {
+    id?: number | undefined;
+    name?: string | undefined;
+    power?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+    userId?: number | undefined;
+    user?: UserDto;
+}
+
+export class PanelDtoListResponsePackage implements IPanelDtoListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelDto[] | undefined;
+
+    constructor(data?: IPanelDtoListResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PanelDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PanelDtoListResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelDtoListResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPanelDtoListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelDto[] | undefined;
+}
+
 export class RegisterDataIn implements IRegisterDataIn {
     email?: string | undefined;
     password?: string | undefined;
@@ -586,6 +721,19 @@ export interface IRegisterDataIn {
     lastName?: string | undefined;
 }
 
+export enum ResponseStatus {
+    _200 = 200,
+    _400 = 400,
+    _401 = 401,
+    _404 = 404,
+    _500 = 500,
+}
+
+export enum Role {
+    _0 = 0,
+    _1 = 1,
+}
+
 export class StringDataIn implements IStringDataIn {
     pageSize?: number;
     currentPage?: number;
@@ -628,6 +776,106 @@ export interface IStringDataIn {
     pageSize?: number;
     currentPage?: number;
     data?: string | undefined;
+}
+
+export class StringResponsePackage implements IStringResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: string | undefined;
+
+    constructor(data?: IStringResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            this.data = _data["data"];
+        }
+    }
+
+    static fromJS(data: any): StringResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new StringResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        data["data"] = this.data;
+        return data;
+    }
+}
+
+export interface IStringResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: string | undefined;
+}
+
+export class UserDto implements IUserDto {
+    id?: number | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    role?: Role;
+
+    constructor(data?: IUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.role = _data["role"];
+        }
+    }
+
+    static fromJS(data: any): UserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["role"] = this.role;
+        return data;
+    }
+}
+
+export interface IUserDto {
+    id?: number | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    role?: Role;
 }
 
 export class WeatherForecast implements IWeatherForecast {

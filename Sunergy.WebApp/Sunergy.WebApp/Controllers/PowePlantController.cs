@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sunergy.Business.Interface;
 using Sunergy.Shared.Common;
 using Sunergy.Shared.DTOs.Panel.DataIn;
+using Sunergy.Shared.DTOs.Panel.DataOut;
 
 namespace Sunergy.WebApp.Controllers
 {
@@ -14,6 +15,9 @@ namespace Sunergy.WebApp.Controllers
             _panelService = panelService;
         }
         [HttpPost("query")]
+        [ProducesResponseType(typeof(ResponsePackage<List<PanelDto>>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAll(DataIn<string> dataIn)
         {
             return Ok(await _panelService.Query(dataIn, GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));

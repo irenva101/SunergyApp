@@ -6,6 +6,7 @@ import { PrivateLayoutComponent } from './private-layout/private-layout.componen
 import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './modules/modals/logout/logout.component';
 import { MapComponent } from './modules/map/map.component';
+import { SolarPanelComponent } from './modules/solar-panel/solar-panel.component';
 
 export const routes: Routes = [
     {
@@ -33,7 +34,10 @@ export const routes: Routes = [
                 path:'map',
                 component: MapComponent,
             },
-
+            {
+                path: 'solar-panel/:id',
+                component: SolarPanelComponent
+            }
         ],
     },
     {

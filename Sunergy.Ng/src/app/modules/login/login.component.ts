@@ -12,13 +12,15 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-
+  dataIn: any;
   data: LoginDataIn = new LoginDataIn();
 
   constructor(private client: Client, private toastr: ToastrService, private router: Router,) {}
   onSubmit(){
     this.client.login(this.data).subscribe({
       next: (response)=>{
+        this.dataIn=response;
+        localStorage.setItem("token", response.data!);
         this.toastr.success('You have successfully loged in.');
         this.router.navigate(['/home']);
       }, 

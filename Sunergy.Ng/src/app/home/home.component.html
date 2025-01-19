@@ -20,7 +20,7 @@
         BROJ ELEKTRANA
       </div>
       <div class="col d-flex justify-content-center box-panel-number p-3">
-        3
+        {{ data?.length }}
       </div>
     </div>
     <div class="col-md-3 g-0">
@@ -37,15 +37,11 @@
       <div class="col d-flex justify-content-center bold-text">ELEKTRANE</div>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-between p-3 second-block">
-    <div class="col-md-3 d-flex justify-content-center box-panel p-5">
-      Subotica
+  <div class="d-flex second-block justify-content-between p-5">
+    @for(item of data; track item.id){
+    <div class="col-md-3 d-flex justify-content-center box-panel p-5" [routerLink]="['/solar-panel', item.id]">
+      {{ item.name }}
     </div>
-    <div class="col-md-3 d-flex justify-content-center box-panel p-5">
-      Novi Sad
-    </div>
-    <div class="col-md-3 d-flex justify-content-center box-panel p-5">
-      Beograd
-    </div>
+    }
   </div>
 </div>
