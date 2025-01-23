@@ -6,7 +6,7 @@ import { Client } from '../../api/api-reference';
   selector: 'app-solar-panel',
   imports: [],
   templateUrl: './solar-panel.component.html',
-  styleUrl: './solar-panel.component.css'
+  styleUrl: './solar-panel.component.scss'
 })
 export class SolarPanelComponent {
 
