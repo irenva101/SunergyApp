@@ -14,6 +14,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.3.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
   </ItemGroup>
@@ -22,6 +23,10 @@
     <ProjectReference Include="..\Sunergy.Business\Sunergy.Business.csproj" />
     <ProjectReference Include="..\Sunergy.Data\Sunergy.Data.csproj" />
     <ProjectReference Include="..\Sunergy.Shared\Sunergy.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helper\SerialisationModels\" />
   </ItemGroup>
 
 </Project>

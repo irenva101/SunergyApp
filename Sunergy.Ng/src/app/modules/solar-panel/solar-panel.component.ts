@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Client } from '../../api/api-reference';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-solar-panel',
@@ -10,10 +11,28 @@ import { Client } from '../../api/api-reference';
 })
 export class SolarPanelComponent {
 
-  constructor(private route: ActivatedRoute, private client: Client){}
+  constructor(private route: ActivatedRoute, private client: Client, private toastr: ToastrService){}
+  data: any;
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = Number(this.route.snapshot.paramMap.get('id'));
     //TODO: Endpoint fot fetching the panel info
+    // this.client.setForecastWeather(id).subscribe({
+    //   next: (response)=>{
+    //     this.data=response;
+    //   },
+    //   error: (err)=>{
+    //     this.toastr.error(err);
+    //   }
+    // })
+
+    // this.client.setHistoryWeather(id).subscribe({
+    //   next: (response)=>{
+    //     this.data=response;
+    //   },
+    //   error: (err)=>{
+    //     this.toastr.error(err);
+    //   }
+    // })
   }
 }

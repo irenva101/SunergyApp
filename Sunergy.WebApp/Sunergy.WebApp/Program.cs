@@ -4,10 +4,13 @@ using Sunergy.Business.Implemention;
 using Sunergy.Business.Interface;
 using Sunergy.Data.Context;
 using Sunergy.Data.Mappings;
+using Sunergy.Shared.Common;
 using Sunergy.WebApp.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SunergyDb");
+
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
 {
@@ -36,6 +39,8 @@ builder.Services.AddTransient<SolarContext>();
 builder.Services.AddTransient<IMD5Service, MD5Service>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IPanelService, PanelService>();
+builder.Services.AddTransient<IWeatherService, WeatherService>();
+builder.Services.AddHttpClient();
 
 //Mappings
 builder.Services.AddAutoMapper(typeof(PanelProfile));
