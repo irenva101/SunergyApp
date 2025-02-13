@@ -1,1 +1,20 @@
-<p>logout works!</p>
+<div class="overlay-light" (click)="toggleInput()"></div>
+<div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <div>
+        <h3>Are you sure you want to logout?</h3>
+      </div>
+      <div class="button-container">
+        <div>
+          <button class="button-style-green" (click)="logout()">
+            Yes
+          </button>
+        </div>
+        <div [routerLink]="['/home']">
+          <button class="button-style-red">
+           No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

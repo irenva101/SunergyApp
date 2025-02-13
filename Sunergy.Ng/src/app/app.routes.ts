@@ -7,6 +7,9 @@ import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './modules/modals/logout/logout.component';
 import { MapComponent } from './modules/map/map.component';
 import { SolarPanelComponent } from './modules/solar-panel/solar-panel.component';
+import { AuthGuard } from './services/guards/auth.guard';
+import { PanelSetupComponent } from './panel-setup/panel-setup.component';
+import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 
 export const routes: Routes = [
     {
@@ -17,6 +20,7 @@ export const routes: Routes = [
     {
         path: '',
         component: PrivateLayoutComponent,
+        canActivate: [AuthGuard],
         children: [
             {
                 path:'dashboard',
@@ -37,6 +41,14 @@ export const routes: Routes = [
             {
                 path: 'solar-panel/:id',
                 component: SolarPanelComponent
+            },
+            {
+                path: 'panel-setup',
+                component: PanelSetupComponent
+            },
+            {
+                path: 'dashboard-admin',
+                component: DashboardAdminComponent
             }
         ],
     },

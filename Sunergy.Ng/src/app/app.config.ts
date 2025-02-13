@@ -8,6 +8,8 @@ import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient } from '@angular/
 import { provideToastr, ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthInterceptor } from './api/auth-interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BarController, Colors, Legend } from 'chart.js';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,8 +27,8 @@ export const appConfig: ApplicationConfig = {
         closeButton: true,
         tapToDismiss: true,
       }),
-      HttpClientModule
+      HttpClientModule,
     ),
+    provideCharts(withDefaultRegisterables()),
   ],
-  
 };

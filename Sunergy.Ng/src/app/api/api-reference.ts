@@ -662,13 +662,13 @@ export interface IDateOnly {
 }
 
 export enum DayOfWeek {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _6 = 6,
+    Sunday = "Sunday",
+    Monday = "Monday",
+    Tuesday = "Tuesday",
+    Wednesday = "Wednesday",
+    Thursday = "Thursday",
+    Friday = "Friday",
+    Saturday = "Saturday",
 }
 
 export class LoginDataIn implements ILoginDataIn {
@@ -932,16 +932,17 @@ export interface IRegisterDataIn {
 }
 
 export enum ResponseStatus {
-    _200 = 200,
-    _400 = 400,
-    _401 = 401,
-    _404 = 404,
-    _500 = 500,
+    OK = "OK",
+    BadRequest = "BadRequest",
+    Unauthorized = "Unauthorized",
+    NotFound = "NotFound",
+    InternalServerError = "InternalServerError",
 }
 
 export enum Role {
-    _0 = 0,
-    _1 = 1,
+    User = "User",
+    Admin = "Admin",
+    Guest = "Guest",
 }
 
 export class StringDataIn implements IStringDataIn {
