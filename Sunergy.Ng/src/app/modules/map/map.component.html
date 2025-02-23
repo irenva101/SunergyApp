@@ -1,1 +1,43 @@
-<p>map works!</p>
+<div class="container-fluid">
+  <div class="row g-0 m-0 pt-4 map-container">
+    <div class="map-frame">
+      <div id="map"></div>
+    </div>
+  </div>
+  @if(selectedPanel){
+    <div class="row g-0">
+      <div class="row g-0">
+        <div class="col g-0">
+          <span>Ime</span>
+        </div>
+        <div class="col g-0">
+          <span>{{selectedPanel.name}}</span>
+        </div>
+      </div>
+      <div class="row g-0">
+        <div class="col g-0">
+          <span>Efikasnost</span>
+        </div>
+        <div class="col g-0">
+          <span>{{selectedPanel.efficiency}}</span>
+        </div>
+      </div>
+      <div class="row g-0">
+        <div class="col g-0">
+          <span>Geografska širina:</span>
+        </div>
+        <div class="col g-0">
+          <span>{{selectedPanel.longitude}}</span>
+        </div>
+      </div>
+      <div class="row g-0">
+        <div class="col g-0">
+          <span>Geografska dužina:</span>
+        </div>
+        <div class="col g-0">
+          <span>{{selectedPanel.latitude}}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

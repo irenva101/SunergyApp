@@ -62,6 +62,22 @@ namespace Sunergy.WebApp.Controllers
             return Ok(responseData);
         }
 
+        [HttpGet("getById/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetById(int id)
+        {
+            return Ok(await _panelService.GetById(id, GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));
+        }
+
+        [HttpGet("getAllPanelsByUserId")]
+        [ProducesResponseType(typeof(ResponsePackage<List<PanelDto>>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllPanelsByUserId()
+        {
+            return Ok(await _panelService.GetAllPanelsByUserId(GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));
+        }
+
 
     }
 }

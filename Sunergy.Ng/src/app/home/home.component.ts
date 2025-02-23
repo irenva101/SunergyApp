@@ -21,6 +21,10 @@ export class HomeComponent {
   data: PanelDto[] | undefined = [];
   weather: any;
 
+  toastrTest(){
+    this.toastr.warning("Test");
+  }
+
   constructor(private client: Client, private toastr: ToastrService) {
     this.reloadTable();
   }

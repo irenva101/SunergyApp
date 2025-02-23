@@ -1,1 +1,123 @@
-<p>panel-setup works!</p>
+<div class="container-fluid g-0 m-0">
+  <div class="row g-0 m-0 d-flex pt-5 align-items-center">
+    <form #crudform="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-item">
+        <label class="form-label" for="name">Ime elektrane:</label>
+        <div class="form-input">
+          <input
+            id="name"
+            [(ngModel)]="data.name"
+            #name="ngModel"
+            name="name"
+            type="text"
+            required
+          />
+          @if (crudform.submitted && name.invalid) {
+          <div class="validation-error">Obavezno polje!</div>
+          } @else if (!name.valid) {
+          <div class="validation-instruction">
+            Unesite željeno ime elektrane.
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-item">
+        <label class="form-label" for="installedPower"
+          >Instalisana snaga:</label
+        >
+        <div class="form-input">
+          <input
+            id="installedPower"
+            [(ngModel)]="data.installedPower"
+            #installedPower="ngModel"
+            name="installedPower"
+            type="number"
+            required
+          />
+          @if (crudform.submitted && installedPower.invalid) {
+          <div class="validation-error">Obavezno polje!</div>
+          } @else if (!installedPower.valid) {
+          <div class="validation-instruction">
+            Unesite vrednost instalisane snage.
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-item">
+        <label class="form-label" for="panelType">Tip panela:</label>
+        <div class="form-input">
+          <select
+            id="panelType"
+            [(ngModel)]="data.panelType"
+            name="panelType"
+            #panelType="ngModel"
+            required
+          >
+            <option *ngFor="let panel of panelTypes" [ngValue]="panel">
+              {{ panel }}
+            </option>
+          </select>
+          @if (panelType.value == null || panelType.value === "") {
+            <div class="validation-instruction">
+              Select the panel type.
+            </div>
+          }
+        </div>
+      </div>
+      @if(!isLatLongSet){
+        <div class="form-item">
+          <label class="form-label" for="latitude"
+            >Geografska širina:</label
+          >
+          <div class="form-input">
+            <input
+              id="latitude"
+              [(ngModel)]="data.latitude"
+              #latitude="ngModel"
+              name="latitude"
+              type="text"
+              required
+            />
+            @if (crudform.submitted && latitude.invalid) {
+            <div class="validation-error">Obavezno polje!</div>
+            } @else if (!latitude.valid) {
+            <div class="validation-instruction">
+              Unesite vrednost geografske širine.
+            </div>
+            }
+          </div>
+        </div>
+        <div class="form-item">
+          <label class="form-label" for="longitude"
+            >Geografska dužina:</label
+          >
+          <div class="form-input">
+            <input
+              id="longitude"
+              [(ngModel)]="data.longitude"
+              #longitude="ngModel"
+              name="longitude"
+              type="text"
+              required
+            />
+            @if (crudform.submitted && longitude.invalid) {
+            <div class="validation-error">Obavezno polje!</div>
+            } @else if (!longitude.valid) {
+            <div class="validation-instruction">
+              Unesite vrednost geografske dužine.
+            </div>
+            }
+          </div>
+        </div>
+      }
+      <div>
+        <button class="add" (click)="isMapOpen=true">Postavi elektranu na mapi</button>
+      </div>
+      @if(isMapOpen){
+        <!-- <div class="row g-0 m-0 d-flex mt-5 mb-5 align-items-center map-container">
+          <app-map (locationSelected)="onLocationSelected($event)"></app-map>
+        </div> -->
+      }
+    </form>
+  </div>
+</div>

@@ -9,7 +9,6 @@ import { provideToastr, ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthInterceptor } from './api/auth-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { BarController, Colors, Legend } from 'chart.js';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,8 +21,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       BrowserAnimationsModule,
       ToastrModule.forRoot({
-        positionClass: 'toast-top-right',
-        timeOut: 1500,
+        positionClass: 'toast-fixed',
+        timeOut: 3000,
         closeButton: true,
         tapToDismiss: true,
       }),

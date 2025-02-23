@@ -34,6 +34,52 @@ namespace Sunergy.Business.Implemention
 
         }
 
+        public async Task<ResponsePackage<List<PanelDto>>> GetAllPanelsByUserId(int? userId, Role? role)
+        {
+            try
+            {
+                var panelsFromDB = await _dbContext.PowerPlants.Where(x => !x.IsDeleted && x.UserId == userId).OrderByDescending(x => x.Created).Select(x => new PanelDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Longitude = x.Longitude,
+                    Latitude = x.Latitude,
+
+                }).AsNoTracking()
+                .ToListAsync();
+                return new ResponsePackage<List<PanelDto>>(panelsFromDB, ResponseStatus.OK);
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<List<PanelDto>>(ResponseStatus.BadRequest, "Something went wrong.");
+            }
+        }
+
+        public Task<ResponsePackage<PanelInfoOut>> GetById(int panelId, int? userId, Role? role)
+        {
+            try
+            {
+                var panelFromDB = _dbContext.PowerPlants.Where(x => !x.IsDeleted && x.Id == panelId).Select(x => new PanelInfoOut
+                {
+                    Name = x.Name,
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude,
+                    Efficiency = x.Efficiency,
+                    Created = x.Created,
+                    InstalledPower = x.InstalledPower,
+                    Updated = x.LastUpdateTime,
+                    PanelType = x.PanelType
+
+                }).FirstOrDefault();
+                return Task.FromResult(new ResponsePackage<PanelInfoOut>(panelFromDB, ResponseStatus.OK));
+
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(new ResponsePackage<PanelInfoOut>(ResponseStatus.BadRequest, "Somwthing went wrong."));
+            }
+        }
+
         public async Task<ResponsePackage<List<PanelDto>>> Query(DataIn<string> dataIn, int? userId, Role? role)
         {
             var allPanels = _dbContext.PowerPlants.Where(x => x.IsDeleted == false);
@@ -62,22 +108,24 @@ namespace Sunergy.Business.Implemention
                 var user = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => x.IsDeleted == false && x.Id == userId);
 
                 user.InstalledPower = dataIn.InstalledPower;
-                user.Efficiency = dataIn.Efficiency;
                 user.Name = dataIn.Name;
                 user.Longitude = dataIn.Longitude;
                 user.Latitude = dataIn.Latitude;
+                user.PanelType = dataIn.PanelType;
+                user.LastUpdateTime = DateTime.UtcNow;
             }
             else
             {
                 var panel = new SolarPowerPlant()
                 {
-                    Efficiency = dataIn.Efficiency,
                     Name = dataIn.Name,
                     Longitude = dataIn.Longitude,
                     Latitude = dataIn.Latitude,
                     InstalledPower = dataIn.InstalledPower,
                     UserId = userId,
-                    Created = DateTime.Now
+                    Created = DateTime.UtcNow,
+                    LastUpdateTime = DateTime.UtcNow,
+
                 };
                 await _dbContext.PowerPlants.AddAsync(panel);
             }

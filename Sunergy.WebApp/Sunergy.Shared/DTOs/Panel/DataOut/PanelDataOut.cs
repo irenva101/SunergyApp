@@ -13,5 +13,7 @@
         public double? Production30Days { get; set; } = 0;
         public double? TotalProduction { get; set; } = 0;
         public Dictionary<DateTime, double> ProductionPerTime { get; set; }
+
+
     }
 }

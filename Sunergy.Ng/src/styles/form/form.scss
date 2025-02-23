@@ -1,0 +1,128 @@
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5rem;
+
+    .form-item {
+        display: flex;
+        flex-direction: row;
+        width: 60%;
+        margin-bottom: 2.2rem;
+
+        .form-label {
+            padding-top: 0.5rem;
+            width: 40%;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .form-input {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:focus {
+                color: var(--text-color);
+                transition: background-color 0s 600000s, color 0s 600000s !important;
+            }
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px var(--form-field) inset !important;
+                -webkit-text-fill-color: var(--menu-item-selected);
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: brightness(0) saturate(30%) invert(75%) sepia(0%) saturate(0%) hue-rotate(0deg);
+            }
+
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type="text"].ng-dirty.ng-touched,
+            input[type="password"].ng-dirty.ng-touched,
+            input[type="number"].ng-dirty.ng-touched,
+            input[type="date"].ng-dirty.ng-touched {
+                background-color: var(--form-field-selected);
+                font-weight: 500;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="number"],
+            input[type="date"] {
+                width: 100%;
+                border-radius: 12px;
+                padding-left: 2%;
+                padding-right: 2%;
+                height: 44px;
+                font-size: 16px;
+                border: var(--form-field-border);
+                color: var(--text-color);
+                background-color: var(--form-field);
+                font-weight: 500;
+
+                &:not(:placeholder-shown):focus {
+                    color: var(--text-color);
+                }
+
+                &:not(:placeholder-shown) {
+                    color: var(--menu-item-selected);
+                }
+            }
+
+            select {
+                padding-left: 2%;
+                padding-right: 2%;
+                cursor: pointer;
+                width: 100%;
+                background-color: var(--form-field);
+                border-radius: 12px;
+                height: 40px;
+                border: var(--form-field-border);
+                color: var(--menu-item-selected);
+                //font-weight: 500;
+            }
+
+            input[type="text"]:focus,
+            input[type="password"]:focus,
+            input[type="number"]:focus,
+            input[type="date"]:focus,
+            select:focus {
+                border: var(--border-bottom);
+                background-color: var(--form-field-selected);
+                outline: none;
+                height: 44px;
+                color: var(--text-color);
+                font-weight: 500;
+            }
+
+            input[type="text"]:invalid,
+            input[type="password"]:invalid,
+            input[type="number"]:invalid,
+            input[type="date"]:invalid,
+            select:invalid {
+                border: var(--form-field-border);
+                outline: none;
+                height: 44px;
+            }
+
+            input[type="text"]:disabled,
+            input[type="password"]:disabled,
+            input[type="number"]:disabled,
+            input[type="date"]:disabled,
+            select:disabled {
+                pointer-events: none;
+                opacity: 0.2;
+                height: 44px;
+            }
+        }
+    }
+}

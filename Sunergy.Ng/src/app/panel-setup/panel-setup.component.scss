@@ -1,0 +1,15 @@
+@import "../../styles/form/form.scss";
+@import "../../styles/scrollbar/scrollbar.scss";
+@import "../../styles/buttons/add-button.scss";
+
+.map-container {
+    width: 90%;
+    height: 35vw;
+    max-height: 500px;
+    min-height: 300px;
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}

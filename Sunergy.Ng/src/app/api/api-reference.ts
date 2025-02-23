@@ -45,6 +45,14 @@ export interface IClient {
      */
     getWeather(): Observable<StringResponsePackage>;
     /**
+     * @return Success
+     */
+    getById(id: number): Observable<void>;
+    /**
+     * @return Success
+     */
+    getAllPanelsByUserId(): Observable<PanelDtoListResponsePackage>;
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -413,6 +421,118 @@ export class Client implements IClient {
     }
 
     /**
+     * @return Success
+     */
+    getById(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/PowePlant/getById/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetById(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processGetById(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getAllPanelsByUserId(): Observable<PanelDtoListResponsePackage> {
+        let url_ = this.baseUrl + "/api/PowePlant/getAllPanelsByUserId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllPanelsByUserId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllPanelsByUserId(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PanelDtoListResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PanelDtoListResponsePackage>;
+        }));
+    }
+
+    protected processGetAllPanelsByUserId(response: HttpResponseBase): Observable<PanelDtoListResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PanelDtoListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -712,12 +832,12 @@ export interface ILoginDataIn {
 }
 
 export class PanelDataIn implements IPanelDataIn {
-    id?: number | undefined;
+    id?: number;
     name?: string | undefined;
-    installedPower?: number | undefined;
-    efficiency?: number | undefined;
-    longitude?: number | undefined;
-    latitude?: number | undefined;
+    installedPower?: number;
+    longitude?: number;
+    latitude?: number;
+    panelType?: PanelType;
 
     constructor(data?: IPanelDataIn) {
         if (data) {
@@ -733,9 +853,9 @@ export class PanelDataIn implements IPanelDataIn {
             this.id = _data["id"];
             this.name = _data["name"];
             this.installedPower = _data["installedPower"];
-            this.efficiency = _data["efficiency"];
             this.longitude = _data["longitude"];
             this.latitude = _data["latitude"];
+            this.panelType = _data["panelType"];
         }
     }
 
@@ -751,20 +871,20 @@ export class PanelDataIn implements IPanelDataIn {
         data["id"] = this.id;
         data["name"] = this.name;
         data["installedPower"] = this.installedPower;
-        data["efficiency"] = this.efficiency;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
+        data["panelType"] = this.panelType;
         return data;
     }
 }
 
 export interface IPanelDataIn {
-    id?: number | undefined;
+    id?: number;
     name?: string | undefined;
-    installedPower?: number | undefined;
-    efficiency?: number | undefined;
-    longitude?: number | undefined;
-    latitude?: number | undefined;
+    installedPower?: number;
+    longitude?: number;
+    latitude?: number;
+    panelType?: PanelType;
 }
 
 export class PanelDto implements IPanelDto {
@@ -881,6 +1001,13 @@ export interface IPanelDtoListResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: PanelDto[] | undefined;
+}
+
+export enum PanelType {
+    ThinFilm = "ThinFilm",
+    Polycrystalline = "Polycrystalline",
+    Monocrystalline = "Monocrystalline",
+    HighEfficiency = "HighEfficiency",
 }
 
 export class RegisterDataIn implements IRegisterDataIn {
