@@ -30,7 +30,7 @@
               "src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles/tostr/tostr.scss",
-              "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -91,7 +91,9 @@
               "src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles/tostr/tostr.scss",
-              "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+              "node_modules/leaflet/dist/leaflet.css"
+              
+      
             ],
             "scripts": [
             ]
