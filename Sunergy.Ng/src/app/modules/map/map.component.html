@@ -4,34 +4,35 @@
     <div class="row g-0 info-contaner p-5 mb-5">
       <div class="row g-0">
         <div class="col g-0">
-          <span>Ime:</span>
+          <span class="label-style bold-text">IME:
+          </span>
         </div>
         <div class="col g-0">
-          <span>{{ selectedPanel.name }}</span>
-        </div>
-      </div>
-      <div class="row g-0">
-        <div class="col g-0">
-          <span>Efikasnost:</span>
-        </div>
-        <div class="col g-0">
-          <span>{{ selectedPanel.efficiency }}</span>
+          <span>{{ selectedPanel.name ? selectedPanel.name : "/"  }}</span>
         </div>
       </div>
       <div class="row g-0">
         <div class="col g-0">
-          <span>Geografska širina:</span>
+          <span class="label-style bold-text">EFIKASNOST:</span>
         </div>
         <div class="col g-0">
-          <span>{{ selectedPanel.longitude }}</span>
+          <span>{{ selectedPanel.efficiency ? selectedPanel.efficiency : "/" }}</span>
         </div>
       </div>
       <div class="row g-0">
         <div class="col g-0">
-          <span>Geografska dužina:</span>
+          <span class="label-style bold-text">GEOGRAFSKA ŠIRINA:</span>
         </div>
         <div class="col g-0">
-          <span>{{ selectedPanel.latitude }}</span>
+          <span>{{ selectedPanel.longitude ? selectedPanel.longitude : "/" }}</span>
+        </div>
+      </div>
+      <div class="row g-0">
+        <div class="col g-0">
+          <span class="label-style bold-text">GEOGRAFSKA DUŽINA:</span>
+        </div>
+        <div class="col g-0">
+          <span>{{ selectedPanel.latitude ? selectedPanel.latitude : "/" }}</span>
         </div>
       </div>
     </div>

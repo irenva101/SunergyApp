@@ -1,4 +1,15 @@
-.info-contaner{
-    border: 1px solid #dbc920;
-    border-radius: 1rem;
+.info-contaner {
+  border: 1px solid #dbc920;
+  border-radius: 1rem;
+}
+
+.bold-text {
+  font-weight: 500;
+}
+
+.label-style {
+  //background-color: var(--component-backgroud);
+  //border-radius: 1rem;
+  color: var(--label);
+  font-size: small;
 }
