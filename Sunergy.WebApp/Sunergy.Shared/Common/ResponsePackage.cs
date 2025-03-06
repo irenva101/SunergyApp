@@ -9,6 +9,7 @@ namespace Sunergy.Shared.Common
         public string Message { get; set; }
 
         public T Data { get; set; }
+        public int StatusCode { get; set; }
 
         public ResponsePackage()
         {

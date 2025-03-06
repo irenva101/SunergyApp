@@ -21,11 +21,15 @@ export class LoginComponent {
       next: (response)=>{
         this.dataIn=response;
         localStorage.setItem("token", response.data!);
-        this.toastr.success('You have successfully loged in.');
-        this.router.navigate(['/home']);
+        if(response.data==null)
+          this.toastr.error(response.message);
+        else{
+          this.toastr.success('You have successfully loged in.');
+          this.router.navigate(['/home']);
+        }
       }, 
       error: (err)=> {
-        this.toastr.error(err);
+        this.toastr.error(err.message);
       }
     })
   }

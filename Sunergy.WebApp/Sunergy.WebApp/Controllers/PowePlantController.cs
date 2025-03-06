@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Sunergy.Business.Interface;
 using Sunergy.Shared.Common;
+using Sunergy.Shared.Constants;
 using Sunergy.Shared.DTOs.Panel.DataIn;
 using Sunergy.Shared.DTOs.Panel.DataOut;
 
@@ -28,6 +29,47 @@ namespace Sunergy.WebApp.Controllers
         {
             return Ok(await _panelService.Query(dataIn, GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));
         }
+
+        [HttpPost("getAllPanels")]
+        [ProducesResponseType(typeof(ResponsePackage<List<PanelAdministratorDataOut>>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllPanels()
+        {
+            var response = await _panelService.GetAllPanels();
+            if (response.Status != ResponseStatus.OK)
+                return StatusCode((int)response.StatusCode, $"Failed to fetch users.");
+            else
+                return Ok(response);
+        }
+
+        [HttpGet("blockPanel")]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> BlockUser(int panelId)
+        {
+            var response = await _panelService.BlockPanel(panelId);
+            if (response.Status != ResponseStatus.OK)
+                return StatusCode((int)response.StatusCode, $"Failed to fetch users.");
+            else
+                return Ok(response);
+        }
+
+        [HttpGet("unblockPanel")]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UnblockUser(int panelId)
+        {
+            var response = await _panelService.UnblockPanel(panelId);
+            if (response.Status != ResponseStatus.OK)
+                return StatusCode((int)response.StatusCode, $"Failed to fetch users.");
+            else
+                return Ok(response);
+        }
+
+
         [HttpPost("save")]
         [AllowAnonymous]
         public async Task<IActionResult> Save(PanelDataIn dataIn)

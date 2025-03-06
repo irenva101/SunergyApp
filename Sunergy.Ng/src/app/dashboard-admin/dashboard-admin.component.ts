@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Client, PanelAdministratorDataOut, UserDataOut } from '../api/api-reference';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -10,76 +12,82 @@ import { FormsModule } from '@angular/forms';
 })
 export class DashboardAdminComponent implements OnInit {
   users: UserDataOut[] | undefined = [];
-  panels: PanelDataOut[] | undefined = [];
+  panels: PanelAdministratorDataOut[] | undefined = [];
+
+  constructor(private client: Client, private toastr: ToastrService) {}
+
   ngOnInit(): void {
-    this.users = [
-      new UserDataOut('irena@gmail.com', 'Irena', 'Varga', true),
-      new UserDataOut('tanja@gmail.com', 'Tanja', 'Savic', false),
-      new UserDataOut('milan@gmail.com', 'Milan', 'Milic', true),
-    ];
-    this.panels = [
-      new PanelDataOut(
-        'Beograd',
-        'admin@example.com',
-        'Irena',
-        'Varga',
-        true
-      ),
-      new PanelDataOut(
-        'Becej Max Sunner',
-        'user@example.com',
-        'Marko',
-        'Petrović',
-        false
-      ),
-      new PanelDataOut(
-        'Sunergy',
-        'support@example.com',
-        'Ana',
-        'Jovanović',
-        true
-      ),
-    ];
+    this.getUsers();
+    this.getPanels();
   }
-}
 
-export class UserDataOut {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  status?: boolean;
-
-  constructor(
-    email?: string,
-    firstName?: string,
-    lastName?: string,
-    status?: boolean
-  ) {
-    this.email = email;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.status = status;
+  getUsers(){
+    this.client.getAllUsers().subscribe({
+      next: (response) => {
+        this.users = response.data;
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    });
   }
-}
 
-export class PanelDataOut {
-  name?: string;
-  userEmail?: string;
-  firstName?: string;
-  lastName?: string;
-  status?: boolean;
+  getPanels(){
+    this.client.getAllPanels().subscribe({
+      next: (response) => {
+        this.panels = response.data;
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    })
+  }
 
-  constructor(
-    name?: string,
-    userEmail?: string,
-    firstName?: string,
-    lastName?: string,
-    status?: boolean
-  ) {
-    this.name = name;
-    this.userEmail = userEmail;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.status = status;
+  blockPanel(panelId: number){
+    this.client.blockPanel(panelId).subscribe({
+      next: (response) => {
+        this.toastr.success(response.message);
+        this.getPanels();
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    })
+  }
+
+  unblockPanel(panelId: number){
+    this.client.unblockPanel(panelId).subscribe({
+      next: (response) => {
+        this.toastr.success(response.message);
+        this.getPanels();
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    })
+  }
+
+  blockUser(userId: number){
+    this.client.blockUser(userId).subscribe({
+      next: (response) => {
+        this.toastr.success(response.message);
+        this.getUsers();
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    })
+  }
+
+  unblockUser(userId: number){
+    this.client.unblockUser(userId).subscribe({
+      next: (response) => {
+        this.toastr.success(response.message);
+        this.getUsers();
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      },
+    })
   }
 }

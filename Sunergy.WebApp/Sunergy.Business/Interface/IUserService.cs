@@ -10,5 +10,9 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackageNoData> Save(UserDataIn dataIn);
         //Task<ResponsePackageNoData> Delete(int userIn);
         //Task<ResponsePackage<List<UserDto>>> GetAll(DataIn<string> dataIn);
+
+        Task<ResponsePackage<List<UserDataOut>>> GetAllUsers();
+        Task<ResponsePackage<string>> BlockUser(int userId);
+        Task<ResponsePackage<string>> UnblockUser(int userId);
     }
 }

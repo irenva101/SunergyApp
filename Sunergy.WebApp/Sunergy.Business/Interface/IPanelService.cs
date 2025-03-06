@@ -12,5 +12,9 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackage<List<PanelDto>>> Query(DataIn<string> dataIn, int? userId, Role? role);
         Task<ResponsePackage<PanelInfoOut>> GetById(int panelId, int? userId, Role? role);
         Task<ResponsePackage<List<PanelDto>>> GetAllPanelsByUserId(int? userId, Role? role);
+        Task<ResponsePackage<List<PanelAdministratorDataOut>>> GetAllPanels();
+        Task<ResponsePackage<string>> BlockPanel(int panelId);
+        Task<ResponsePackage<string>> UnblockPanel(int panelId);
+
     }
 }

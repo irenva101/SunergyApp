@@ -32,6 +32,20 @@ export interface IClient {
      */
     query(body: StringDataIn | undefined): Observable<PanelDtoListResponsePackage>;
     /**
+     * @return Success
+     */
+    getAllPanels(): Observable<PanelAdministratorDataOutListResponsePackage>;
+    /**
+     * @param panelId (optional) 
+     * @return Success
+     */
+    blockPanel(panelId: number | undefined): Observable<StringResponsePackage>;
+    /**
+     * @param panelId (optional) 
+     * @return Success
+     */
+    unblockPanel(panelId: number | undefined): Observable<StringResponsePackage>;
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -52,6 +66,20 @@ export interface IClient {
      * @return Success
      */
     getAllPanelsByUserId(): Observable<PanelDtoListResponsePackage>;
+    /**
+     * @return Success
+     */
+    getAllUsers(): Observable<UserDataOutListResponsePackage>;
+    /**
+     * @param userId (optional) 
+     * @return Success
+     */
+    blockUser(userId: number | undefined): Observable<StringResponsePackage>;
+    /**
+     * @param userId (optional) 
+     * @return Success
+     */
+    unblockUser(userId: number | undefined): Observable<StringResponsePackage>;
     /**
      * @param id (optional) 
      * @return Success
@@ -235,6 +263,202 @@ export class Client implements IClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = PanelDtoListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getAllPanels(): Observable<PanelAdministratorDataOutListResponsePackage> {
+        let url_ = this.baseUrl + "/api/PowePlant/getAllPanels";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllPanels(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllPanels(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PanelAdministratorDataOutListResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PanelAdministratorDataOutListResponsePackage>;
+        }));
+    }
+
+    protected processGetAllPanels(response: HttpResponseBase): Observable<PanelAdministratorDataOutListResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PanelAdministratorDataOutListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param panelId (optional) 
+     * @return Success
+     */
+    blockPanel(panelId: number | undefined): Observable<StringResponsePackage> {
+        let url_ = this.baseUrl + "/api/PowePlant/blockPanel?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBlockPanel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBlockPanel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
+        }));
+    }
+
+    protected processBlockPanel(response: HttpResponseBase): Observable<StringResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param panelId (optional) 
+     * @return Success
+     */
+    unblockPanel(panelId: number | undefined): Observable<StringResponsePackage> {
+        let url_ = this.baseUrl + "/api/PowePlant/unblockPanel?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnblockPanel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnblockPanel(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
+        }));
+    }
+
+    protected processUnblockPanel(response: HttpResponseBase): Observable<StringResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status === 400) {
@@ -511,6 +735,202 @@ export class Client implements IClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = PanelDtoListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getAllUsers(): Observable<UserDataOutListResponsePackage> {
+        let url_ = this.baseUrl + "/getAllUsers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllUsers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllUsers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserDataOutListResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserDataOutListResponsePackage>;
+        }));
+    }
+
+    protected processGetAllUsers(response: HttpResponseBase): Observable<UserDataOutListResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserDataOutListResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param userId (optional) 
+     * @return Success
+     */
+    blockUser(userId: number | undefined): Observable<StringResponsePackage> {
+        let url_ = this.baseUrl + "/blockUser?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBlockUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBlockUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
+        }));
+    }
+
+    protected processBlockUser(response: HttpResponseBase): Observable<StringResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param userId (optional) 
+     * @return Success
+     */
+    unblockUser(userId: number | undefined): Observable<StringResponsePackage> {
+        let url_ = this.baseUrl + "/unblockUser?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnblockUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnblockUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
+        }));
+    }
+
+    protected processUnblockUser(response: HttpResponseBase): Observable<StringResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status === 400) {
@@ -831,6 +1251,118 @@ export interface ILoginDataIn {
     password?: string | undefined;
 }
 
+export class PanelAdministratorDataOut implements IPanelAdministratorDataOut {
+    id?: number;
+    panelName?: string | undefined;
+    userFirstName?: string | undefined;
+    userLastName?: string | undefined;
+    email?: string | undefined;
+    status?: boolean;
+
+    constructor(data?: IPanelAdministratorDataOut) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.panelName = _data["panelName"];
+            this.userFirstName = _data["userFirstName"];
+            this.userLastName = _data["userLastName"];
+            this.email = _data["email"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): PanelAdministratorDataOut {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelAdministratorDataOut();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["panelName"] = this.panelName;
+        data["userFirstName"] = this.userFirstName;
+        data["userLastName"] = this.userLastName;
+        data["email"] = this.email;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IPanelAdministratorDataOut {
+    id?: number;
+    panelName?: string | undefined;
+    userFirstName?: string | undefined;
+    userLastName?: string | undefined;
+    email?: string | undefined;
+    status?: boolean;
+}
+
+export class PanelAdministratorDataOutListResponsePackage implements IPanelAdministratorDataOutListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelAdministratorDataOut[] | undefined;
+    statusCode?: number;
+
+    constructor(data?: IPanelAdministratorDataOutListResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PanelAdministratorDataOut.fromJS(item));
+            }
+            this.statusCode = _data["statusCode"];
+        }
+    }
+
+    static fromJS(data: any): PanelAdministratorDataOutListResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelAdministratorDataOutListResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["statusCode"] = this.statusCode;
+        return data;
+    }
+}
+
+export interface IPanelAdministratorDataOutListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelAdministratorDataOut[] | undefined;
+    statusCode?: number;
+}
+
 export class PanelDataIn implements IPanelDataIn {
     id?: number;
     name?: string | undefined;
@@ -955,6 +1487,7 @@ export class PanelDtoListResponsePackage implements IPanelDtoListResponsePackage
     status?: ResponseStatus;
     message?: string | undefined;
     data?: PanelDto[] | undefined;
+    statusCode?: number;
 
     constructor(data?: IPanelDtoListResponsePackage) {
         if (data) {
@@ -974,6 +1507,7 @@ export class PanelDtoListResponsePackage implements IPanelDtoListResponsePackage
                 for (let item of _data["data"])
                     this.data!.push(PanelDto.fromJS(item));
             }
+            this.statusCode = _data["statusCode"];
         }
     }
 
@@ -993,6 +1527,7 @@ export class PanelDtoListResponsePackage implements IPanelDtoListResponsePackage
             for (let item of this.data)
                 data["data"].push(item.toJSON());
         }
+        data["statusCode"] = this.statusCode;
         return data;
     }
 }
@@ -1001,6 +1536,7 @@ export interface IPanelDtoListResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: PanelDto[] | undefined;
+    statusCode?: number;
 }
 
 export enum PanelType {
@@ -1120,6 +1656,7 @@ export class StringResponsePackage implements IStringResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: string | undefined;
+    statusCode?: number;
 
     constructor(data?: IStringResponsePackage) {
         if (data) {
@@ -1135,6 +1672,7 @@ export class StringResponsePackage implements IStringResponsePackage {
             this.status = _data["status"];
             this.message = _data["message"];
             this.data = _data["data"];
+            this.statusCode = _data["statusCode"];
         }
     }
 
@@ -1150,6 +1688,7 @@ export class StringResponsePackage implements IStringResponsePackage {
         data["status"] = this.status;
         data["message"] = this.message;
         data["data"] = this.data;
+        data["statusCode"] = this.statusCode;
         return data;
     }
 }
@@ -1158,6 +1697,115 @@ export interface IStringResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: string | undefined;
+    statusCode?: number;
+}
+
+export class UserDataOut implements IUserDataOut {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    status?: boolean;
+
+    constructor(data?: IUserDataOut) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): UserDataOut {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDataOut();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IUserDataOut {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    status?: boolean;
+}
+
+export class UserDataOutListResponsePackage implements IUserDataOutListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: UserDataOut[] | undefined;
+    statusCode?: number;
+
+    constructor(data?: IUserDataOutListResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(UserDataOut.fromJS(item));
+            }
+            this.statusCode = _data["statusCode"];
+        }
+    }
+
+    static fromJS(data: any): UserDataOutListResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDataOutListResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["statusCode"] = this.statusCode;
+        return data;
+    }
+}
+
+export interface IUserDataOutListResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: UserDataOut[] | undefined;
+    statusCode?: number;
 }
 
 export class UserDto implements IUserDto {

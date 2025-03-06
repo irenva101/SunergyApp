@@ -21,6 +21,50 @@ namespace Sunergy.Business.Implemention
             _mapper = mapper;
         }
 
+        public async Task<ResponsePackage<string>> BlockPanel(int panelId)
+        {
+            var panel = await _dbContext.PowerPlants.Where(p => p.Id == panelId).FirstOrDefaultAsync();
+            if (panel == null)
+            {
+                return new ResponsePackage<string>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "Panel does not exist in database."
+                };
+            }
+
+            panel.IsDeleted = true;
+            await _dbContext.SaveChangesAsync();
+
+            return new ResponsePackage<string>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "Panel successfully blocked."
+            };
+        }
+
+        public async Task<ResponsePackage<string>> UnblockPanel(int panelId)
+        {
+            var panel = await _dbContext.PowerPlants.Where(p => p.Id == panelId).FirstOrDefaultAsync();
+            if (panel == null)
+            {
+                return new ResponsePackage<string>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "Panel does not exist in database."
+                };
+            }
+
+            panel.IsDeleted = false;
+            await _dbContext.SaveChangesAsync();
+
+            return new ResponsePackage<string>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "Panel successfully unblocked."
+            };
+        }
+
         public async Task<ResponsePackageNoData> Delete(int panelId)
         {
             var powerPlant = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => x.IsDeleted == false && x.Id == panelId);
@@ -33,6 +77,38 @@ namespace Sunergy.Business.Implemention
             return new ResponsePackageNoData(ResponseStatus.OK, "Panel deleted succesfully");
 
         }
+
+        public async Task<ResponsePackage<List<PanelAdministratorDataOut>>> GetAllPanels()
+        {
+            var panels = await _dbContext.PowerPlants.Include(p => p.User).ToListAsync();
+            if (panels == null || panels.Count == 0)
+            {
+                return new ResponsePackage<List<PanelAdministratorDataOut>>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "Panels do not exist in database."
+                };
+            }
+
+            var panelsList = panels.Select(p => new PanelAdministratorDataOut
+            {
+                Id = p.Id,
+                PanelName = p.Name,
+                Email = p.User.Email,
+                UserFirstName = p.User.FirstName,
+                UserLastName = p.User.LastName,
+                Status = !p.IsDeleted
+            }).ToList();
+
+            return new ResponsePackage<List<PanelAdministratorDataOut>>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "Panels retrieved successfully.",
+                Data = panelsList
+            };
+        }
+
+
 
         public async Task<ResponsePackage<List<PanelDto>>> GetAllPanelsByUserId(int? userId, Role? role)
         {
@@ -132,5 +208,7 @@ namespace Sunergy.Business.Implemention
             await _dbContext.SaveChangesAsync();
             return new ResponsePackageNoData(ResponseStatus.OK, "Successfully saved");
         }
+
+
     }
 }

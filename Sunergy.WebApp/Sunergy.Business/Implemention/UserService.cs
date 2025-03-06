@@ -22,6 +22,83 @@ namespace Sunergy.Business.Implemention
             _mapper = mapper;
         }
 
+        public async Task<ResponsePackage<string>> BlockUser(int userId)
+        {
+            var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new ResponsePackage<string>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "User does not exist in database."
+                };
+            }
+
+            user.IsDeleted = true;
+            await _dbContext.SaveChangesAsync();
+
+            return new ResponsePackage<string>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "User successfully blocked."
+            };
+        }
+
+        public async Task<ResponsePackage<string>> UnblockUser(int userId)
+        {
+            var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new ResponsePackage<string>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "User does not exist in database."
+                };
+            }
+
+            user.IsDeleted = false;
+            await _dbContext.SaveChangesAsync();
+
+            return new ResponsePackage<string>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "User successfully unblocked."
+            };
+        }
+
+        public async Task<ResponsePackage<List<UserDataOut>>> GetAllUsers()
+        {
+            var users = await _dbContext.Users.Where(u => u.Role == Role.User).ToListAsync();
+            if (users == null || users.Count == 0)
+            {
+                return new ResponsePackage<List<UserDataOut>>()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Message = "Users do not exist in database."
+                };
+            }
+
+            var userslist = users.Select(user => new UserDataOut
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Status = !user.IsDeleted
+
+            }).ToList();
+
+            return new ResponsePackage<List<UserDataOut>>()
+            {
+                Status = ResponseStatus.OK,
+                Message = "Users retrieved successfully.",
+                Data = userslist
+            };
+
+        }
+
         public async Task<ResponsePackage<UserDto>> GetByEmail(string email)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email && x.IsDeleted == false);
@@ -30,7 +107,7 @@ namespace Sunergy.Business.Implemention
                 return new ResponsePackage<UserDto>()
                 {
                     Status = ResponseStatus.NotFound,
-                    Message = "User doesn't exist in database."
+                    Message = "User doesn't exist in database or is blocked."
                 };
             }
             else

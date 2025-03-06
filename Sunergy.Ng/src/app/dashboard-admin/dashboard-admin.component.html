@@ -32,7 +32,11 @@
             </td>
             }
             <td>
-              <span>BLOCK</span>
+                @if(row.status){
+                    <span (click)="blockUser(row.id!)">BLOCK</span>
+                }@else {
+                    <span (click)="unblockUser(row.id!)">UNBLOCK</span>
+                }
             </td>
           </tr>
         </tbody>
@@ -56,10 +60,10 @@
             <td>
               <img src="solar-panel.svg" width="25" height="25" />
             </td>
-            <td>{{ row.name }}</td>
-            <td>{{ row.userEmail }}</td>
-            <td>{{ row.firstName }}</td>
-            <td>{{ row.lastName }}</td>
+            <td>{{ row.panelName }}</td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.userFirstName }}</td>
+            <td>{{ row.userLastName }}</td>
             @if(row.status){
             <td>
               <span class="p-1 ps-2 pe-2 active">Active</span>
@@ -69,8 +73,12 @@
               <span class="p-1 ps-2 pe-2 inactive">Inactive</span>
             </td>
             }
-            <td>
-              <span>BLOCK</span>
+            <td >
+                @if(row.status){
+                    <span (click)="blockPanel(row.id!)">BLOCK</span>
+                }@else {
+                    <span (click)="unblockPanel(row.id!)">UNBLOCK</span>
+                }
             </td>
           </tr>
         </tbody>
