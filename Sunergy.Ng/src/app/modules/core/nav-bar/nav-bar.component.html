@@ -5,9 +5,11 @@
               <li class="nav-item">
                 <a class="nav-link" routerLink="/home" [ngClass]="{ 'active-tab': isActive('/home') }">Home</a>
               </li>
+            @if(user.role===Role.User){
               <li class="nav-item">
                 <a class="nav-link" routerLink="/map" [ngClass]="{ 'active-tab': isActive('/map') }">Map</a>
               </li>
+            }
               @if(user.role===Role.User){
                 <li class="nav-item">
                   <a class="nav-link" routerLink="/panel-setup" [ngClass]="{ 'active-tab': isActive('/panel-setup')}">Add New Power Plant</a>

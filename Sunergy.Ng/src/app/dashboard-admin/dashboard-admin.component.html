@@ -1,1 +1,80 @@
-<p>dashboard-admin works!</p>
+<div
+  class="container-fluid g-0 d-flex align-items-center justify-content-center"
+>
+  <div class="row g-0 m-0 p-0">
+    <div class="row g-0 mt-5 mb-5 d-flex justify-content-center">
+      <table>
+        <thead>
+          <tr>
+            <td>USERS</td>
+            <td>EMAIL</td>
+            <td>IME</td>
+            <td>PREZIME</td>
+            <td>STATUS</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of users">
+            <td>
+              <img src="administrator/user.svg" width="20" height="20" />
+            </td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.firstName }}</td>
+            <td>{{ row.lastName }}</td>
+            @if(row.status){
+            <td>
+              <span class="p-1 ps-2 pe-2 active">Active</span>
+            </td>
+            }@else {
+            <td>
+              <span class="p-1 ps-2 pe-2 inactive">Inactive</span>
+            </td>
+            }
+            <td>
+              <span>BLOCK</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row g-0 mb-5 d-flex justify-content-center">
+      <table>
+        <thead>
+          <tr>
+            <td>PANELS</td>
+            <td>IME PANELA</td>
+            <td>EMAIL</td>
+            <td>IME</td>
+            <td>PREZIME</td>
+            <td>STATUS</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of panels">
+            <td>
+              <img src="solar-panel.svg" width="25" height="25" />
+            </td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.userEmail }}</td>
+            <td>{{ row.firstName }}</td>
+            <td>{{ row.lastName }}</td>
+            @if(row.status){
+            <td>
+              <span class="p-1 ps-2 pe-2 active">Active</span>
+            </td>
+            }@else {
+            <td>
+              <span class="p-1 ps-2 pe-2 inactive">Inactive</span>
+            </td>
+            }
+            <td>
+              <span>BLOCK</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
