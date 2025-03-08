@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Client, PowerWeatherDataOut, ProfitWeatherDataOut } from '../../api/api-reference';
+import {
+  Client,
+  PowerWeatherDataOut,
+  ProfitWeatherDataOut,
+} from '../../api/api-reference';
 import { ToastrService } from 'ngx-toastr';
 import {
   BaseChartDirective,
@@ -22,6 +26,13 @@ export class SolarPanelComponent {
   powerData: PowerWeatherDataOut = new PowerWeatherDataOut();
   profitData: ProfitWeatherDataOut = new ProfitWeatherDataOut();
   today = new Date();
+
+  currentTemp: number | undefined;
+  currentCloudnes: number | undefined;
+  generatedPowerSum: number | undefined;
+  currentPower: number | undefined;
+  currentPrice: number | undefined;
+  profitSum: number | undefined;
 
   timeLabels = [
     '00h',
@@ -112,10 +123,14 @@ export class SolarPanelComponent {
           text: 'Cena (EUR) i Profit (EUR)',
         },
         beginAtZero: true,
+        grid: {
+          drawOnChartArea: false, // Ovdje možete odlučiti da li želite da mreža za drugu osu bude vidljiva
+        },
       },
     },
   };
 
+  //#region power
   getYesterdayPower() {
     const yesterday = new Date();
     yesterday.setDate(this.today.getDate() - 1);
@@ -242,8 +257,10 @@ export class SolarPanelComponent {
       },
     });
   }
+  //#endregion
 
-  getYesterdayProfit(){
+  //#region profit
+  getYesterdayProfit() {
     const yesterday = new Date();
     yesterday.setDate(this.today.getDate() - 1);
     this.client.getProfitWeather(yesterday).subscribe({
@@ -286,7 +303,7 @@ export class SolarPanelComponent {
     });
   }
 
-  getTodayProfit(){
+  getTodayProfit() {
     this.client.getProfitWeather(this.today).subscribe({
       next: (result) => {
         this.profitData = result.data!;
@@ -327,7 +344,7 @@ export class SolarPanelComponent {
     });
   }
 
-  getTomorrowProfit(){
+  getTomorrowProfit() {
     const tomorrow = new Date();
     tomorrow.setDate(this.today.getDate() + 1);
     this.client.getProfitWeather(tomorrow).subscribe({
@@ -369,6 +386,7 @@ export class SolarPanelComponent {
       },
     });
   }
+  //#endregion
 
   //#region constructor
   constructor(
@@ -381,10 +399,53 @@ export class SolarPanelComponent {
   //#region Oninit setup
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.getCurrentTemp();
+    this.getCurrentCloudnes();
+    this.getGeneratedPowerSum();
+
+    // this.getCurrentPower();
+    // this.getCurrentPrice();
+    // this.getProfitSum();
+
     //this.setForcastWeather();
     //this.setHistoryWeather();
   }
   //#endregion
+
+  getCurrentTemp() {
+    this.client.getCurrentTemp().subscribe({
+      next: (response) =>{
+        this.currentTemp=response.data;
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      }
+    });
+  }
+
+  getCurrentCloudnes() {
+    this.client.getCurrentClouds().subscribe({
+      next: (response) =>{
+        this.currentCloudnes=response.data;
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      }
+    });
+  }
+
+  getGeneratedPowerSum() {
+    this.client.getGeneratedPowerSum().subscribe({
+      next: (response) =>{
+        this.generatedPowerSum=response.data;
+      },
+      error: (err) => {
+        this.toastr.error(err);
+      }
+    });
+  }
+
+  
 
   //#region DB setup
   setForcastWeather() {

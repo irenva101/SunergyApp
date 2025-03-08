@@ -70,6 +70,47 @@ namespace Sunergy.WebApp.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getCurrentTemp")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentTemp()
+        {
+            var result = await _weatherService.GetCurrentTemp();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getCurrentClouds")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentClouds()
+        {
+            var result = await _weatherService.GetCurrentClouds();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getGeneratedPowerSum")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetGeneratedPowerSum()
+        {
+            var result = await _weatherService.GetGeneratedPowerSum();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
+            }
+            return Ok(result);
+        }
 
     }
 }
