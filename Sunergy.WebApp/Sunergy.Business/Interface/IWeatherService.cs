@@ -12,6 +12,9 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackage<double>> GetCurrentTemp();
         Task<ResponsePackage<double>> GetCurrentClouds();
         Task<ResponsePackage<double>> GetGeneratedPowerSum();
+        Task<ResponsePackage<double>> GetCurrentPower();
+        Task<ResponsePackage<double>> GetCurrentPrice();
+        Task<ResponsePackage<double>> GetGeneratedProfitSum();
 
     }
 }

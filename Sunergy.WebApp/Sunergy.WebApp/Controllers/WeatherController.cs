@@ -93,7 +93,7 @@ namespace Sunergy.WebApp.Controllers
             var result = await _weatherService.GetCurrentClouds();
             if (result == null)
             {
-                return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current clouds.");
             }
             return Ok(result);
         }
@@ -107,7 +107,49 @@ namespace Sunergy.WebApp.Controllers
             var result = await _weatherService.GetGeneratedPowerSum();
             if (result == null)
             {
-                return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch generated power sum.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getCurrentPower")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentPower()
+        {
+            var result = await _weatherService.GetCurrentPower();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current power.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getCurrentPrice")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCurrentPrice()
+        {
+            var result = await _weatherService.GetCurrentPrice();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch current price.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getGeneratedProfitSum")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetGeneratedProfitSum()
+        {
+            var result = await _weatherService.GetGeneratedProfitSum();
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch generated profit sum.");
             }
             return Ok(result);
         }

@@ -21,7 +21,7 @@
       class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
     >
       <span class="subtitle">UKUPNO IZGENERISANA SNAGA</span>
-      <span class="small">{{generatedPowerSum}} W</span>
+      <span class="small">{{generatedPowerSum | number:'1.2-2'}} W</span>
     </div>
   </div>
   <div
@@ -81,19 +81,19 @@
       class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
     >
       <span class="subtitle">TRENUTNA SNAGA</span>
-      <span class="small">1kw</span>
+      <span class="small">{{currentPower}} W</span>
     </div>
     <div
       class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
     >
       <span class="subtitle">TRENUTNA CENA</span>
-      <span class="small">0.4RSD</span>
+      <span class="small">{{currentPrice}} EUR</span>
     </div>
     <div
       class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">TRENUTNA OSTVARENA DOBIT</span>
-      <span class="small">32.000 RSD</span>
+      <span class="subtitle">UKUPNA OSTVARENA DOBIT</span>
+      <span class="small">{{profitSum | number:'1.2-2'}} EUR</span>
     </div>
   </div>
   <div class="row-md-12 d-flex justify-content-start subtitle-component pt-3" (click)="getYesterdayProfit()">

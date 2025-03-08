@@ -12,11 +12,12 @@ import {
   withDefaultRegisterables,
 } from 'ng2-charts';
 import { ChartOptions } from 'chart.js';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-solar-panel',
   providers: [provideCharts(withDefaultRegisterables())],
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, DecimalPipe],
   templateUrl: './solar-panel.component.html',
   styleUrl: './solar-panel.component.scss',
 })
@@ -403,15 +404,16 @@ export class SolarPanelComponent {
     this.getCurrentCloudnes();
     this.getGeneratedPowerSum();
 
-    // this.getCurrentPower();
-    // this.getCurrentPrice();
-    // this.getProfitSum();
+    this.getCurrentPower();
+    this.getCurrentPrice();
+    this.getProfitSum();
 
-    //this.setForcastWeather();
-    //this.setHistoryWeather();
+    // this.setForcastWeather();
+    // this.setHistoryWeather();
   }
   //#endregion
 
+  //#region MainPower
   getCurrentTemp() {
     this.client.getCurrentTemp().subscribe({
       next: (response) =>{
@@ -445,7 +447,40 @@ export class SolarPanelComponent {
     });
   }
 
-  
+  //#endregion
+
+  getCurrentPower(){
+    this.client.getCurrentPower().subscribe({
+      next: (response) => {
+        this.currentPower= response.data;
+      },
+      error: (err)=>{
+        this.toastr.error(err);
+      }
+    })
+  }
+
+  getCurrentPrice(){
+    this.client.getCurrentPrice().subscribe({
+      next: (response) => {
+        this.currentPrice= response.data;
+      },
+      error: (err)=>{
+        this.toastr.error(err);
+      }
+    })
+  }
+
+  getProfitSum(){
+    this.client.getGeneratedProfitSum().subscribe({
+      next: (response) => {
+        this.profitSum= response.data;
+      },
+      error: (err)=>{
+        this.toastr.error(err);
+      }
+    })
+  }
 
   //#region DB setup
   setForcastWeather() {

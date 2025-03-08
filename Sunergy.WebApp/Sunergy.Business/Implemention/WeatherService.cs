@@ -48,6 +48,74 @@ namespace Sunergy.Business.Implemention
 
         }
 
+        public async Task<ResponsePackage<double>> GetCurrentPower()
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+                DateTime today = now.Date;
+                int hourNow = now.Hour;
+                var resultForDateAndHour = await _dbContext.PanelWeatherHours
+                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
+                    .FirstOrDefaultAsync();
+                return new ResponsePackage<double>()
+                {
+                    Data = resultForDateAndHour.Produced,
+                    Message = "Successfully fetched weather data."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<double>() { Message = ex.Message };
+            }
+        }
+
+        public async Task<ResponsePackage<double>> GetCurrentPrice()
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+                DateTime today = now.Date;
+                int hourNow = now.Hour;
+                var resultForDateAndHour = await _dbContext.PanelWeatherHours
+                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
+                    .FirstOrDefaultAsync();
+                return new ResponsePackage<double>()
+                {
+                    Data = resultForDateAndHour.CurrentPrice,
+                    Message = "Successfully fetched weather data."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<double>() { Message = ex.Message };
+            }
+        }
+
+        public async Task<ResponsePackage<double>> GetGeneratedProfitSum()
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+                DateTime today = now.Date;
+                int hourNow = now.Hour;
+
+                var rowsBeforeNow = await _dbContext.PanelWeatherHours
+                    .Where(p => p.Time <= now)
+                    .ToListAsync();
+
+                return new ResponsePackage<double>()
+                {
+                    Data = rowsBeforeNow.Sum(p => p.Earning),
+                    Message = "Successfully fetched weather data."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<double>() { Message = ex.Message };
+            }
+        }
+
         public async Task<ResponsePackage<double>> GetCurrentTemp()
         {
             try
