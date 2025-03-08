@@ -96,6 +96,11 @@ export interface IClient {
      */
     getPowerWeather(dataIn: Date | undefined): Observable<PowerWeatherDataOutResponsePackage>;
     /**
+     * @param dataIn (optional) 
+     * @return Success
+     */
+    getProfitWeather(dataIn: Date | undefined): Observable<ProfitWeatherDataOutResponsePackage>;
+    /**
      * @return Success
      */
     getWeatherForecast(): Observable<WeatherForecast[]>;
@@ -1159,6 +1164,73 @@ export class Client implements IClient {
     }
 
     /**
+     * @param dataIn (optional) 
+     * @return Success
+     */
+    getProfitWeather(dataIn: Date | undefined): Observable<ProfitWeatherDataOutResponsePackage> {
+        let url_ = this.baseUrl + "/getProfitWeather?";
+        if (dataIn === null)
+            throw new Error("The parameter 'dataIn' cannot be null.");
+        else if (dataIn !== undefined)
+            url_ += "dataIn=" + encodeURIComponent(dataIn ? "" + dataIn.toISOString() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProfitWeather(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProfitWeather(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ProfitWeatherDataOutResponsePackage>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ProfitWeatherDataOutResponsePackage>;
+        }));
+    }
+
+    protected processGetProfitWeather(response: HttpResponseBase): Observable<ProfitWeatherDataOutResponsePackage> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ProfitWeatherDataOutResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @return Success
      */
     getWeatherForecast(): Observable<WeatherForecast[]> {
@@ -1731,6 +1803,122 @@ export interface IPowerWeatherDataOutResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: PowerWeatherDataOut;
+    statusCode?: number;
+}
+
+export class ProfitWeatherDataOut implements IProfitWeatherDataOut {
+    powers?: number[] | undefined;
+    prices?: number[] | undefined;
+    profit?: number[] | undefined;
+
+    constructor(data?: IProfitWeatherDataOut) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["powers"])) {
+                this.powers = [] as any;
+                for (let item of _data["powers"])
+                    this.powers!.push(item);
+            }
+            if (Array.isArray(_data["prices"])) {
+                this.prices = [] as any;
+                for (let item of _data["prices"])
+                    this.prices!.push(item);
+            }
+            if (Array.isArray(_data["profit"])) {
+                this.profit = [] as any;
+                for (let item of _data["profit"])
+                    this.profit!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ProfitWeatherDataOut {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfitWeatherDataOut();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.powers)) {
+            data["powers"] = [];
+            for (let item of this.powers)
+                data["powers"].push(item);
+        }
+        if (Array.isArray(this.prices)) {
+            data["prices"] = [];
+            for (let item of this.prices)
+                data["prices"].push(item);
+        }
+        if (Array.isArray(this.profit)) {
+            data["profit"] = [];
+            for (let item of this.profit)
+                data["profit"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IProfitWeatherDataOut {
+    powers?: number[] | undefined;
+    prices?: number[] | undefined;
+    profit?: number[] | undefined;
+}
+
+export class ProfitWeatherDataOutResponsePackage implements IProfitWeatherDataOutResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: ProfitWeatherDataOut;
+    statusCode?: number;
+
+    constructor(data?: IProfitWeatherDataOutResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? ProfitWeatherDataOut.fromJS(_data["data"]) : <any>undefined;
+            this.statusCode = _data["statusCode"];
+        }
+    }
+
+    static fromJS(data: any): ProfitWeatherDataOutResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfitWeatherDataOutResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["statusCode"] = this.statusCode;
+        return data;
+    }
+}
+
+export interface IProfitWeatherDataOutResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: ProfitWeatherDataOut;
     statusCode?: number;
 }
 

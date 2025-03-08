@@ -8,5 +8,6 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackageNoData> SetForcastWeatherByPanelId(int panelId);
         Task<ResponsePackageNoData> SetHistoryWeatherByPanelId(int panelId);
         Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn);
+        Task<ResponsePackage<ProfitWeatherDataOut>> GetProfitWeather(DateTime dataIn);
     }
 }

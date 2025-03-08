@@ -30,8 +30,8 @@ namespace Sunergy.Business.Implemention
             try
             {
                 var resultForDate = await _dbContext.PanelWeatherHours
-        .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
-        .ToListAsync();
+                    .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
+                    .ToListAsync();
 
                 var result = new PowerWeatherDataOut()
                 {
@@ -41,13 +41,35 @@ namespace Sunergy.Business.Implemention
                 };
 
                 return new ResponsePackage<PowerWeatherDataOut>() { Data = result, Message = "Successfully fetched weather data." };
-
             }
             catch (Exception ex)
             {
                 return new ResponsePackage<PowerWeatherDataOut>() { Message = ex.Message };
             }
 
+        }
+
+        public async Task<ResponsePackage<ProfitWeatherDataOut>> GetProfitWeather(DateTime dataIn)
+        {
+            try
+            {
+                var resultForDate = await _dbContext.PanelWeatherHours
+                    .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
+                    .ToListAsync();
+
+                var result = new ProfitWeatherDataOut()
+                {
+                    Powers = resultForDate.Select(p => p.Produced).ToList(),
+                    Prices = resultForDate.Select(p => p.CurrentPrice).ToList(),
+                    Profit = resultForDate.Select(p => p.CurrentPrice).ToList(),
+                };
+
+                return new ResponsePackage<ProfitWeatherDataOut>() { Data = result, Message = "Successfully fetched weather data." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<ProfitWeatherDataOut>() { Message = ex.Message };
+            }
         }
 
         public async Task<ResponsePackageNoData> SetForcastWeatherByPanelId(int panelId)
@@ -120,26 +142,55 @@ namespace Sunergy.Business.Implemention
 
                     foreach (var hour in day.Hour)
                     {
+                        //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
-                        forecast.Hours.Add(new PanelWeatherHours
+
+                        var produced = (powerPlant.InstalledPower ?? 0 / panelType) *
+                            (powerPlant.Efficiency ?? 0) *
+                            (1 - (hour.Cloud / 100.0)) *
+                             (hour.TempC + k * (1 - hour.Cloud / 100));
+
+
+                        //price calculation
+                        double price = 0;
+                        string timeString = hour.Time; // "2025-03-08 00:00"
+                        DateTime parsedTime = DateTime.ParseExact(timeString, "yyyy-MM-dd HH:mm", null);
+                        int hourAsInt = parsedTime.Hour;
+                        if (hourAsInt >= 23 || hourAsInt < 6)
+                        {
+                            // Between 23h and 6h
+                            price = 0.05;
+                        }
+                        else if (hourAsInt >= 6 && hourAsInt < 10)
+                        {
+                            // Between 06h and 10h
+                            price = 0.10;
+                        }
+                        else if (hourAsInt >= 10 && hourAsInt < 19)
+                        {
+                            // Between 10h and 19h
+                            price = 0.20;
+                        }
+                        else if (hourAsInt >= 19 && hourAsInt < 23)
                         {
 
+                            // Between 19h and 23h
+                            price = 0.10;
+                        }
+
+                        //mapping
+                        forecast.Hours.Add(new PanelWeatherHours
+                        {
                             Time = DateTime.Parse(hour.Time),
                             Temperature = hour.TempC,
                             Cloudiness = hour.Cloud,
                             LastUpdateTime = DateTime.Now,
-                            Produced =
-                                (powerPlant.InstalledPower ?? 0 / panelType) *
-                                (powerPlant.Efficiency ?? 0) *
-                                (1 - (hour.Cloud / 100.0)) *
-                                 (hour.TempC + k * (1 - hour.Cloud / 100))
-
+                            Produced = produced,
+                            CurrentPrice = price,
+                            Earning = produced / 1000 * price
                         });
                         forecasts.Add(forecast);
                     }
-
-
-
                 }
 
                 _dbContext.PanelWeathers.AddRange(forecasts);
@@ -217,24 +268,56 @@ namespace Sunergy.Business.Implemention
 
                     foreach (var hour in day.Hour)
                     {
+                        //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
-                        history.Hours.Add(new PanelWeatherHours
+
+                        var produced = (powerPlant.InstalledPower ?? 0 / panelType) *
+                            (powerPlant.Efficiency ?? 0) *
+                            (1 - (hour.Cloud / 100.0)) *
+                             (hour.TempC + k * (1 - hour.Cloud / 100));
+
+
+                        //price calculation
+                        double price = 0;
+                        string timeString = hour.Time; // "2025-03-08 00:00"
+                        DateTime parsedTime = DateTime.ParseExact(timeString, "yyyy-MM-dd HH:mm", null);
+                        int hourAsInt = parsedTime.Hour;
+                        if (hourAsInt >= 23 || hourAsInt < 6)
+                        {
+                            // Between 23h and 6h
+                            price = 0.05;
+                        }
+                        else if (hourAsInt >= 6 && hourAsInt < 10)
+                        {
+                            // Between 06h and 10h
+                            price = 0.10;
+                        }
+                        else if (hourAsInt >= 10 && hourAsInt < 19)
+                        {
+                            // Between 10h and 19h
+                            price = 0.20;
+                        }
+                        else if (hourAsInt >= 19 && hourAsInt < 23)
                         {
 
+                            // Between 19h and 23h
+                            price = 0.10;
+                        }
+
+                        //mapping
+                        history.Hours.Add(new PanelWeatherHours
+                        {
                             Time = DateTime.Parse(hour.Time),
                             Temperature = hour.TempC,
                             Cloudiness = hour.Cloud,
                             LastUpdateTime = DateTime.Now,
-                            Produced =
-                                (powerPlant.InstalledPower ?? 0 / panelType) *
-                                (powerPlant.Efficiency ?? 0) *
-                                (1 - (hour.Cloud / 100.0)) *
-                                 (hour.TempC + k * (1 - hour.Cloud / 100))
-
+                            Produced = produced,
+                            CurrentPrice = price,
+                            Earning = produced / 1000 * price
                         });
-                    }
 
-                    historys.Add(history);
+                        historys.Add(history);
+                    }
                 }
 
                 try

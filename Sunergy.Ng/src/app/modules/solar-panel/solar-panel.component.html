@@ -26,7 +26,7 @@
   </div>
   <div
     class="row-md-12 d-flex justify-content-start subtitle-component pt-3"
-    (click)="getYesterdayData()"
+    (click)="getYesterdayPower()"
   >
     <span class="subtitle">JUCE</span>
   </div>
@@ -43,7 +43,7 @@
       </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayData()">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayPower()">
     <span class="subtitle">DANAS</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center">
@@ -59,7 +59,7 @@
       </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowData()">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowPower()">
     <span class="subtitle">SUTRA</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2 borderb pb-5">
@@ -96,37 +96,52 @@
       <span class="small">32.000 RSD</span>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component pt-3">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component pt-3" (click)="getYesterdayProfit()">
     <span class="subtitle">JUCE</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2">
     <div
-      class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">JUCE</span>
-      <span class="small">(DIJAGRAM)</span>
+      <canvas
+        baseChart
+        [data]="yesterdayProfitData"
+        [options]="chartProfitOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayProfit()">
     <span class="subtitle">DANAS</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center">
     <div
-      class="col-md-12 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">DANAS</span>
-      <span class="small">(DIJAGRAM)</span>
+      <canvas
+        baseChart
+        [data]="todayProfitData"
+        [options]="chartProfitOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowProfit()">
     <span class="subtitle">SUTRA</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2 borderb">
     <div
-      class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">SUTRA</span>
-      <span class="small">(DIJAGRAM)</span>
+      <canvas
+        baseChart
+        [data]="tomorrowProfitData"
+        [options]="chartProfitOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
 </div>
