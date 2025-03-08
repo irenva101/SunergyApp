@@ -29,12 +29,31 @@ namespace Sunergy.Business.Implemention
             //Fetching the power plant from DB
             var powerPlant = await _dbContext.PowerPlants.FirstOrDefaultAsync
                 (x => x.IsDeleted == false && x.Id == panelId);
+
+            var panelType = 0.0;
+            if (powerPlant.PanelType == PanelType.ThinFilm)
+            {
+                panelType = 0.12;
+            }
+            else if (powerPlant.PanelType == PanelType.Monocrystalline)
+            {
+                panelType = 0.2;
+            }
+            else if (powerPlant.PanelType == PanelType.Polycrystalline)
+            {
+                panelType = 0.15;
+            }
+            else
+            {
+                panelType = 0.23;
+            }
+
             if (powerPlant == null)
             {
                 return new ResponsePackageNoData(ResponseStatus.BadRequest, "Panel with given id doesn't exist.");
             }
 
-            var next3days = DateTime.Now.AddDays(+3).ToString("yyyy-MM-dd");
+            var next3days = DateTime.Now.AddDays(+2).ToString("yyyy-MM-dd");
 
             var urlForecast = $"https://api.weatherapi.com/v1/forecast.json?key={_apiKey}&q={powerPlant.Latitude},{powerPlant.Longitude}&days=2&hourly=1&alerts=no";
             var responseForecast = await _httpClient.GetAsync(urlForecast);
@@ -72,18 +91,29 @@ namespace Sunergy.Business.Implemention
                         LastUpdateTime = DateTime.Now,
                     };
 
+
                     foreach (var hour in day.Hour)
                     {
+                        var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
                         forecast.Hours.Add(new PanelWeatherHours
                         {
+
                             Time = DateTime.Parse(hour.Time),
                             Temperature = hour.TempC,
                             Cloudiness = hour.Cloud,
-                            LastUpdateTime = DateTime.Now
+                            LastUpdateTime = DateTime.Now,
+                            Produced =
+                                (powerPlant.InstalledPower ?? 0 / panelType) *
+                                (powerPlant.Efficiency ?? 0) *
+                                (1 - (hour.Cloud / 100.0)) *
+                                 (hour.TempC + k * (1 - hour.Cloud / 100))
+
                         });
+                        forecasts.Add(forecast);
                     }
 
-                    forecasts.Add(forecast);
+
+
                 }
 
                 _dbContext.PanelWeathers.AddRange(forecasts);
@@ -100,6 +130,25 @@ namespace Sunergy.Business.Implemention
             //Fetching the power plant from DB
             var powerPlant = await _dbContext.PowerPlants.FirstOrDefaultAsync
                 (x => x.IsDeleted == false && x.Id == panelId);
+
+            var panelType = 0.0;
+            if (powerPlant.PanelType == PanelType.ThinFilm)
+            {
+                panelType = 0.12;
+            }
+            else if (powerPlant.PanelType == PanelType.Monocrystalline)
+            {
+                panelType = 0.2;
+            }
+            else if (powerPlant.PanelType == PanelType.Polycrystalline)
+            {
+                panelType = 0.15;
+            }
+            else
+            {
+                panelType = 0.23;
+            }
+
             if (powerPlant == null)
             {
                 return new ResponsePackageNoData(ResponseStatus.BadRequest, "Panel with given id doesn't exist.");
@@ -142,20 +191,33 @@ namespace Sunergy.Business.Implemention
 
                     foreach (var hour in day.Hour)
                     {
+                        var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
                         history.Hours.Add(new PanelWeatherHours
                         {
+
                             Time = DateTime.Parse(hour.Time),
                             Temperature = hour.TempC,
                             Cloudiness = hour.Cloud,
-                            LastUpdateTime = DateTime.Now
+                            LastUpdateTime = DateTime.Now,
+                            Produced =
+                                (powerPlant.InstalledPower ?? 0 / panelType) *
+                                (powerPlant.Efficiency ?? 0) *
+                                (1 - (hour.Cloud / 100.0)) *
+                                 (hour.TempC + k * (1 - hour.Cloud / 100))
+
                         });
                     }
 
                     historys.Add(history);
                 }
 
-                _dbContext.PanelWeathers.AddRange(historys);
-                await _dbContext.SaveChangesAsync();
+                try
+                {
+                    _dbContext.PanelWeathers.AddRange(historys);
+                    await _dbContext.SaveChangesAsync();
+
+                }
+                catch (Exception ex) { }
 
                 return new ResponsePackageNoData(ResponseStatus.OK, "Successfully saved weather data.");
             }
