@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sunergy.Business.Interface;
 using Sunergy.Shared.Common;
+using Sunergy.Shared.DTOs.Weather.DataOut;
 
 namespace Sunergy.WebApp.Controllers
 {
@@ -40,6 +41,21 @@ namespace Sunergy.WebApp.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("getPowerWeather")]
+        [ProducesResponseType(typeof(ResponsePackage<PowerWeatherDataOut>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetPowerWeather(DateTime dataIn)
+        {
+            var result = await _weatherService.GetPowerWeather(dataIn);
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch power weather data.");
+            }
+            return Ok(result);
+        }
+
 
     }
 }

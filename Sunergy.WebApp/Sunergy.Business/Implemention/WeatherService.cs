@@ -5,6 +5,7 @@ using Sunergy.Data.Context;
 using Sunergy.Data.Model;
 using Sunergy.Shared.Common;
 using Sunergy.Shared.Constants;
+using Sunergy.Shared.DTOs.Weather.DataOut;
 using Sunergy.Shared.SerialisationModels;
 using System.Text.Json;
 
@@ -22,6 +23,31 @@ namespace Sunergy.Business.Implemention
             _dbContext = dbContext;
             _httpClient = httpClient;
             _apiKey = appSettings.Value.OpenWeatherApiKey;
+        }
+
+        public async Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn)
+        {
+            try
+            {
+                var resultForDate = await _dbContext.PanelWeatherHours
+        .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
+        .ToListAsync();
+
+                var result = new PowerWeatherDataOut()
+                {
+                    Powers = resultForDate.Select(p => p.Produced).ToList(),
+                    Temperatures = resultForDate.Select(p => p.Temperature).ToList(),
+                    Clouds = resultForDate.Select(p => p.Cloudiness).ToList(),
+                };
+
+                return new ResponsePackage<PowerWeatherDataOut>() { Data = result, Message = "Successfully fetched weather data." };
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<PowerWeatherDataOut>() { Message = ex.Message };
+            }
+
         }
 
         public async Task<ResponsePackageNoData> SetForcastWeatherByPanelId(int panelId)

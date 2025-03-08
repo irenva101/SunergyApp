@@ -1,4 +1,5 @@
 ﻿using Sunergy.Shared.Common;
+using Sunergy.Shared.DTOs.Weather.DataOut;
 
 namespace Sunergy.Business.Interface
 {
@@ -6,5 +7,6 @@ namespace Sunergy.Business.Interface
     {
         Task<ResponsePackageNoData> SetForcastWeatherByPanelId(int panelId);
         Task<ResponsePackageNoData> SetHistoryWeatherByPanelId(int panelId);
+        Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn);
     }
 }

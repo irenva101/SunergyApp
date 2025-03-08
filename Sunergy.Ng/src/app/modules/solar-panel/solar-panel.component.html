@@ -1,9 +1,5 @@
-<!-- <div class="container-fluid g-0">
-  <div class="chart-container" > -->
-    <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'">
-    </canvas>
-  <!-- </div> -->
-  <!-- <div
+<div class="container-fluid g-0">
+  <div
     class="row-md-12 d-flex mt-5 justify-content-start subtitle-component pb-3"
   >
     <span class="subtitle-bigger">SOLARNA ELEKTRANA: BEOGRAD</span>
@@ -28,43 +24,58 @@
       <span class="small">40kW</span>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component pt-3">
+  <div
+    class="row-md-12 d-flex justify-content-start subtitle-component pt-3"
+    (click)="getYesterdayData()"
+  >
     <span class="subtitle">JUCE</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2">
     <div
-      class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">JUCE</span>
-      <div style="width: 80%; margin: 0 auto;">
-        <canvas id="weatherChart"></canvas>
-      </div>
+      <canvas
+        baseChart
+        [data]="yesterdayChartData"
+        [options]="chartPowerOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayData()">
     <span class="subtitle">DANAS</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center">
     <div
-      class="col-md-12 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <div style="display: block">
-        <canvas id="weatherChart"></canvas>
-      </div>
+      <canvas
+        baseChart
+        [data]="todayChartData"
+        [options]="chartPowerOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component">
+  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowData()">
     <span class="subtitle">SUTRA</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2 borderb pb-5">
     <div
-      class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
+      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
     >
-      <span class="subtitle">SUTRA</span>
-      <span class="small">(DIJAGRAM)</span>
+      <canvas
+        baseChart
+        [data]="tomorrowChartData"
+        [options]="chartPowerOptions"
+        [type]="'line'"
+      >
+      </canvas>
     </div>
   </div>
-
+  <!-- second section -->
   <div class="row-md-12 d-flex justify-content-center gap-2 pt-5">
     <div
       class="col-md-4 d-flex flex-column align-items-center justify-content-center container-parameters p-3 rounded m-3"
@@ -117,5 +128,5 @@
       <span class="subtitle">SUTRA</span>
       <span class="small">(DIJAGRAM)</span>
     </div>
-  </div> -->
-<!-- </div> -->
+  </div>
+</div>
