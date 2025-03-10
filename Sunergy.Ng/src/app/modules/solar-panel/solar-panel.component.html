@@ -25,26 +25,28 @@
     </div>
   </div>
   <div
-    class="row-md-12 d-flex justify-content-start subtitle-component pt-3"
-    (click)="getYesterdayPower()"
+    class="row-md-12 d-flex justify-content-between subtitle-component pt-3"
   >
-    <span class="subtitle">JUCE</span>
+    <span class="subtitle d-flex align-items-center">JUCE</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(yesterdayChartData)">PREUZMI CSV</span>
   </div>
-  <div class="row-md-12 d-flex justify-content-center gap-2">
-    <div
-      class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
-    >
-      <canvas
-        baseChart
-        [data]="yesterdayChartData"
-        [options]="chartPowerOptions"
-        [type]="'line'"
+    <div class="row-md-12 d-flex justify-content-center gap-2">
+      <div
+        class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
       >
-      </canvas>
+        <canvas
+          baseChart
+          [data]="yesterdayChartData"
+          [options]="chartPowerOptions"
+          [type]="'line'"
+        >
+        </canvas>
+      </div>
     </div>
-  </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayPower()">
-    <span class="subtitle">DANAS</span>
+  
+  <div class="row-md-12 d-flex justify-content-between subtitle-component">
+    <span class="subtitle d-flex align-items-center">DANAS</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(todayChartData)">PREUZMI CSV</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center">
     <div
@@ -59,8 +61,9 @@
       </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowPower()">
-    <span class="subtitle">SUTRA</span>
+  <div class="row-md-12 d-flex justify-content-between subtitle-component">
+    <span class="subtitle d-flex align-items-center">SUTRA</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(tomorrowChartData)">PREUZMI CSV</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2 borderb pb-5">
     <div
@@ -96,8 +99,9 @@
       <span class="small">{{profitSum | number:'1.2-2'}} EUR</span>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component pt-3" (click)="getYesterdayProfit()">
-    <span class="subtitle">JUCE</span>
+  <div class="row-md-12 d-flex justify-content-between subtitle-component pt-3">
+    <span class="subtitle d-flex align-items-center">JUCE</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(yesterdayProfitData)">PREUZMI CSV</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2">
     <div
@@ -112,8 +116,9 @@
       </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTodayProfit()">
-    <span class="subtitle">DANAS</span>
+  <div class="row-md-12 d-flex justify-content-between subtitle-component">
+    <span class="subtitle d-flex align-items-center">DANAS</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(todayProfitData)">PREUZMI CSV</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center">
     <div
@@ -128,8 +133,9 @@
       </canvas>
     </div>
   </div>
-  <div class="row-md-12 d-flex justify-content-start subtitle-component" (click)="getTomorrowProfit()">
-    <span class="subtitle">SUTRA</span>
+  <div class="row-md-12 d-flex justify-content-between subtitle-component">
+    <span class="subtitle d-flex align-items-center">SUTRA</span>
+    <span class="subtitle pointer span-wrapper" (click)="generateCSV(tomorrowProfitData)">PREUZMI CSV</span>
   </div>
   <div class="row-md-12 d-flex justify-content-center gap-2 borderb">
     <div

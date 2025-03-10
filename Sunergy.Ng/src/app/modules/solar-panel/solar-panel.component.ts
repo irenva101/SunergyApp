@@ -12,11 +12,11 @@ import {
   withDefaultRegisterables,
 } from 'ng2-charts';
 import { ChartOptions } from 'chart.js';
-import { DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-solar-panel',
-  providers: [provideCharts(withDefaultRegisterables())],
+  providers: [provideCharts(withDefaultRegisterables()), CommonModule],
   imports: [BaseChartDirective, DecimalPipe],
   templateUrl: './solar-panel.component.html',
   styleUrl: './solar-panel.component.scss',
@@ -131,6 +131,31 @@ export class SolarPanelComponent {
     },
   };
 
+  //#region csv dowload
+  downloadCSV(csvContent: string){
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'data.csv';
+    link.click();
+  }
+
+  generateCSV(data: any){
+   let csvContent = 'Sat,' + data.datasets.map((dataset: { label: any; }) => dataset.label).join(',') + '\n';
+   const rows = data.labels.map((label: any, index: string | number) => {
+       const power = data.datasets[0].data[index] || '';
+       const price = data.datasets[1].data[index] || '';
+       const profit = data.datasets[2].data[index] || '';
+      
+       return [label, power, price, profit].join(',');
+   });
+
+   csvContent += rows.join('\n');
+
+   this.downloadCSV(csvContent);
+  }
+  //#endregion
+
   //#region power
   getYesterdayPower() {
     const yesterday = new Date();
@@ -187,7 +212,7 @@ export class SolarPanelComponent {
               label: 'Snaga (kW)',
               data: this.powerData.powers,
               borderColor: 'rgba(75, 192, 192, 1)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              backgroundColor: 'rgba(16, 30, 30, 0.2)',
               fill: false,
               yAxisID: 'y',
             },
@@ -209,6 +234,7 @@ export class SolarPanelComponent {
             },
           ],
         };
+
       },
       error: (err) => {
         this.toastr.error(err);
@@ -408,8 +434,15 @@ export class SolarPanelComponent {
     this.getCurrentPrice();
     this.getProfitSum();
 
-    // this.setForcastWeather();
-    // this.setHistoryWeather();
+    this.getYesterdayPower();
+    this.getTodayPower();
+    this.getTomorrowPower();
+    this.getYesterdayProfit();
+    this.getTodayProfit();
+    this.getTomorrowProfit();
+
+    //this.setForcastWeather();
+    //this.setHistoryWeather();
   }
   //#endregion
 
@@ -449,6 +482,7 @@ export class SolarPanelComponent {
 
   //#endregion
 
+  //#region MainProfit
   getCurrentPower(){
     this.client.getCurrentPower().subscribe({
       next: (response) => {
@@ -481,6 +515,7 @@ export class SolarPanelComponent {
       }
     })
   }
+  //#endregion
 
   //#region DB setup
   setForcastWeather() {
