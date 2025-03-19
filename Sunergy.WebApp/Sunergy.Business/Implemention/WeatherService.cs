@@ -298,13 +298,32 @@ namespace Sunergy.Business.Implemention
 
                     foreach (var hour in day.Hour)
                     {
+                        double solarIntensity = 0.0;
+                        var hourTime = DateTime.Parse(hour.Time);
+                        if (hourTime.TimeOfDay >= forecast.SunriseTime?.TimeOfDay &&
+                            hourTime.TimeOfDay <= forecast.SunsetTime?.TimeOfDay)
+                        {
+                            // Convert sunrise and sunset times to total hours from the start of the day
+                            var sunriseTimeHours = forecast.SunriseTime?.TimeOfDay.TotalHours ?? 0.0;
+                            var sunsetTimeHours = forecast.SunsetTime?.TimeOfDay.TotalHours ?? 0.0;
+                            var hourTimeHours = (hourTime - hourTime.Date).TotalHours;
+
+                            // Calculate the peak hour (midday between sunrise and sunset)
+                            double peakHour = (sunriseTimeHours + sunsetTimeHours) / 2.0;
+
+                            // Normalize the time: calculate the difference between the current hour and the peak hour
+                            double normalizedTime = Math.Abs(hourTimeHours - peakHour) / (sunsetTimeHours - sunriseTimeHours);
+
+                            // Solar intensity decreases as the distance from midday increases
+                            solarIntensity = 1.0 - normalizedTime;
+                        }
                         //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
 
                         var produced = (powerPlant.InstalledPower ?? 0 / panelType) *
                             (powerPlant.Efficiency ?? 0) *
                             (1 - (hour.Cloud / 100.0)) *
-                             (hour.TempC + k * (1 - hour.Cloud / 100));
+                             (hour.TempC + k * (1 - hour.Cloud / 100)) * solarIntensity;
 
 
                         //price calculation
@@ -424,13 +443,32 @@ namespace Sunergy.Business.Implemention
 
                     foreach (var hour in day.Hour)
                     {
+                        double solarIntensity = 0.0;
+                        var hourTime = DateTime.Parse(hour.Time);
+                        if (hourTime.TimeOfDay >= history.SunriseTime?.TimeOfDay &&
+                            hourTime.TimeOfDay <= history.SunsetTime?.TimeOfDay)
+                        {
+                            // Convert sunrise and sunset times to total hours from the start of the day
+                            var sunriseTimeHours = history.SunriseTime?.TimeOfDay.TotalHours ?? 0.0;
+                            var sunsetTimeHours = history.SunsetTime?.TimeOfDay.TotalHours ?? 0.0;
+                            var hourTimeHours = (hourTime - hourTime.Date).TotalHours;
+
+                            // Calculate the peak hour (midday between sunrise and sunset)
+                            double peakHour = (sunriseTimeHours + sunsetTimeHours) / 2.0;
+
+                            // Normalize the time: calculate the difference between the current hour and the peak hour
+                            double normalizedTime = Math.Abs(hourTimeHours - peakHour) / (sunsetTimeHours - sunriseTimeHours);
+
+                            // Solar intensity decreases as the distance from midday increases
+                            solarIntensity = 1.0 - normalizedTime;
+                        }
                         //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
 
                         var produced = (powerPlant.InstalledPower ?? 0 / panelType) *
                             (powerPlant.Efficiency ?? 0) *
                             (1 - (hour.Cloud / 100.0)) *
-                             (hour.TempC + k * (1 - hour.Cloud / 100));
+                             (hour.TempC + k * (1 - hour.Cloud / 100)) * solarIntensity;
 
 
                         //price calculation

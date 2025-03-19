@@ -653,7 +653,7 @@ export class SolarPanelComponent {
       },
       error: (err) => {
         this.toastr.error(err);
-      },
+              },
     });
   }
 
