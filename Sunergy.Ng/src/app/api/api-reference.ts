@@ -92,9 +92,10 @@ export interface IClient {
     setHistoryWeather(id: number | undefined): Observable<StringResponsePackage>;
     /**
      * @param dataIn (optional) 
+     * @param id (optional) 
      * @return Success
      */
-    getPowerWeather(dataIn: Date | undefined): Observable<PowerWeatherDataOutResponsePackage>;
+    getPowerWeather(dataIn: Date | undefined, id: number | undefined): Observable<PowerWeatherDataOutResponsePackage>;
     /**
      * @param dataIn (optional) 
      * @return Success
@@ -1122,14 +1123,19 @@ export class Client implements IClient {
 
     /**
      * @param dataIn (optional) 
+     * @param id (optional) 
      * @return Success
      */
-    getPowerWeather(dataIn: Date | undefined): Observable<PowerWeatherDataOutResponsePackage> {
+    getPowerWeather(dataIn: Date | undefined, id: number | undefined): Observable<PowerWeatherDataOutResponsePackage> {
         let url_ = this.baseUrl + "/getPowerWeather?";
         if (dataIn === null)
             throw new Error("The parameter 'dataIn' cannot be null.");
         else if (dataIn !== undefined)
             url_ += "dataIn=" + encodeURIComponent(dataIn ? "" + dataIn.toISOString() : "") + "&";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2138,6 +2144,8 @@ export class PowerWeatherDataOut implements IPowerWeatherDataOut {
     powers?: number[] | undefined;
     temperatures?: number[] | undefined;
     clouds?: number[] | undefined;
+    sunset?: Date;
+    sunrise?: Date;
 
     constructor(data?: IPowerWeatherDataOut) {
         if (data) {
@@ -2165,6 +2173,8 @@ export class PowerWeatherDataOut implements IPowerWeatherDataOut {
                 for (let item of _data["clouds"])
                     this.clouds!.push(item);
             }
+            this.sunset = _data["sunset"] ? new Date(_data["sunset"].toString()) : <any>undefined;
+            this.sunrise = _data["sunrise"] ? new Date(_data["sunrise"].toString()) : <any>undefined;
         }
     }
 
@@ -2192,6 +2202,8 @@ export class PowerWeatherDataOut implements IPowerWeatherDataOut {
             for (let item of this.clouds)
                 data["clouds"].push(item);
         }
+        data["sunset"] = this.sunset ? this.sunset.toISOString() : <any>undefined;
+        data["sunrise"] = this.sunrise ? this.sunrise.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -2200,6 +2212,8 @@ export interface IPowerWeatherDataOut {
     powers?: number[] | undefined;
     temperatures?: number[] | undefined;
     clouds?: number[] | undefined;
+    sunset?: Date;
+    sunrise?: Date;
 }
 
 export class PowerWeatherDataOutResponsePackage implements IPowerWeatherDataOutResponsePackage {

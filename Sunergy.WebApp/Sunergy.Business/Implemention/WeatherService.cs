@@ -162,26 +162,37 @@ namespace Sunergy.Business.Implemention
             }
         }
 
-        public async Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn)
+        public async Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn, int panelId)
         {
             try
             {
-                var resultForDate = await _dbContext.PanelWeatherHours
+                var resultHours = await _dbContext.PanelWeatherHours
                     .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
                     .ToListAsync();
 
+                var resultDay = await _dbContext.PanelWeathers.Where(p => p.Day.Date == dataIn.Date && p.PanelId == panelId && !p.IsDeleted).FirstOrDefaultAsync();
+                if (resultDay == null)
+                {
+                    return new ResponsePackage<PowerWeatherDataOut>(ResponseStatus.NotFound, "Panel with given id doesn't exist.");
+                }
+
                 var result = new PowerWeatherDataOut()
                 {
-                    Powers = resultForDate.Select(p => p.Produced).ToList(),
-                    Temperatures = resultForDate.Select(p => p.Temperature).ToList(),
-                    Clouds = resultForDate.Select(p => p.Cloudiness).ToList(),
+                    Powers = resultHours.Select(p => p.Produced).ToList(),
+                    Temperatures = resultHours.Select(p => p.Temperature).ToList(),
+                    Clouds = resultHours.Select(p => p.Cloudiness).ToList(),
+                    Sunrise = resultDay.SunriseTime ?? DateTime.MinValue,
+                    Sunset = resultDay.SunsetTime ?? DateTime.MinValue,
                 };
 
                 return new ResponsePackage<PowerWeatherDataOut>() { Data = result, Message = "Successfully fetched weather data." };
             }
             catch (Exception ex)
             {
-                return new ResponsePackage<PowerWeatherDataOut>() { Message = ex.Message };
+                return new ResponsePackage<PowerWeatherDataOut>()
+                {
+                    Message = ex.Message
+                };
             }
 
         }

@@ -46,9 +46,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<PowerWeatherDataOut>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetPowerWeather(DateTime dataIn)
+        public async Task<IActionResult> GetPowerWeather(DateTime dataIn, int id)
         {
-            var result = await _weatherService.GetPowerWeather(dataIn);
+            var result = await _weatherService.GetPowerWeather(dataIn, id);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch power weather data.");

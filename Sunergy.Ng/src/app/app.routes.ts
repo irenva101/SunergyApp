@@ -10,6 +10,7 @@ import { AuthGuard } from './services/guards/auth.guard';
 import { PanelSetupComponent } from './panel-setup/panel-setup.component';
 import { DashboardAdminComponent } from './dashboard-admin/dashboard-admin.component';
 import { MapComponent } from './modules/map/map.component';
+import { TestComponent } from './test/test.component';
 
 export const routes: Routes = [
     {
@@ -49,6 +50,10 @@ export const routes: Routes = [
             {
                 path: 'dashboard-admin',
                 component: DashboardAdminComponent
+            },
+            {
+                path: 'test',
+                component: TestComponent
             }
         ],
     },

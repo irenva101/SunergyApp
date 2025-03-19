@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Client,
@@ -11,8 +11,10 @@ import {
   provideCharts,
   withDefaultRegisterables,
 } from 'ng2-charts';
-import { ChartOptions } from 'chart.js';
+import { ChartOptions, Plugin } from 'chart.js';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import 'chartjs-plugin-annotation';
+import 'chartjs-adapter-date-fns';
 
 @Component({
   selector: 'app-solar-panel',
@@ -35,32 +37,11 @@ export class SolarPanelComponent {
   currentPrice: number | undefined;
   profitSum: number | undefined;
 
-  timeLabels = [
-    '00h',
-    '01h',
-    '02h',
-    '03h',
-    '04h',
-    '05h',
-    '06h',
-    '07h',
-    '08h',
-    '09h',
-    '10h',
-    '11h',
-    '12h',
-    '13h',
-    '14h',
-    '15h',
-    '16h',
-    '17h',
-    '18h',
-    '19h',
-    '20h',
-    '21h',
-    '22h',
-    '23h',
-  ];
+  timeLabels = Array.from({ length: 24 }, (_, i) => {
+    const date = new Date(1970, 0, 1); // 1. januar 1970. godine
+    date.setHours(i, 0, 0, 0); // Postavi sate (00:00, 01:00, ... 23:00)
+    return date.getTime(); // Pretvori u timestamp
+  });
 
   public todayChartData: any;
   public yesterdayChartData: any;
@@ -73,6 +54,16 @@ export class SolarPanelComponent {
           display: true,
           text: 'Sati',
         },
+        type: 'time',
+        time: {
+          unit: 'hour',
+          tooltipFormat: 'HH:mm',
+          displayFormats: {
+            hour: 'HH:mm'
+          }
+        },
+        min: this.timeLabels[0],
+        max: this.timeLabels[this.timeLabels.length-1],
       },
       y: {
         type: 'linear',
@@ -93,7 +84,60 @@ export class SolarPanelComponent {
         beginAtZero: true,
       },
     },
+    plugins: {
+      annotation: {
+        annotations: [],
+      },
+    },
   };
+
+  public verticalLine1Value: number = 0;
+  public verticalLine2Value: number = 0
+
+  public plugIn: Plugin<'line'>[] = [
+      {
+        id: 'verticalLine1',
+        beforeDraw: (chart) => {
+          const ctx = chart.ctx;
+          const xPosition = chart.scales['x'].getPixelForValue(
+            this.verticalLine1Value
+          ); // Promeni na odgovarajuću vrednost
+          ctx.beginPath();
+          ctx.moveTo(xPosition, chart.chartArea.top);
+          ctx.lineTo(xPosition, chart.chartArea.bottom);
+          ctx.strokeStyle = 'orange'; // Boja linije
+          ctx.lineWidth = 1; // Debljina linije
+          ctx.stroke();
+  
+          // Dodaj labelu "Sunrise"
+          ctx.font = 'bold 12px Arial'; // Stil fonta
+          ctx.fillStyle = 'orange'; // Boja teksta
+          ctx.textAlign = 'center'; // Poravnanje teksta
+          ctx.fillText('Sunrise', xPosition, chart.chartArea.top +10); // Postavljanje iznad grafika
+        },
+      },
+      {
+        id: 'verticalLine2',
+        beforeDraw: (chart) => {
+          const ctx = chart.ctx;
+          const xPosition = chart.scales['x'].getPixelForValue(
+           this.verticalLine2Value
+          ); // Promeni na odgovarajuću vrednost
+          ctx.beginPath();
+          ctx.moveTo(xPosition, chart.chartArea.top);
+          ctx.lineTo(xPosition, chart.chartArea.bottom);
+          ctx.strokeStyle = 'orange'; // Boja linije
+          ctx.lineWidth = 1; // Debljina linije
+          ctx.stroke();
+  
+          // Dodaj labelu "Sunset"
+          ctx.font = 'bold 12px Arial'; // Stil fonta
+          ctx.fillStyle = 'orange'; // Boja teksta
+          ctx.textAlign = 'center'; // Poravnanje teksta
+          ctx.fillText('Sunset', xPosition, chart.chartArea.top + 10); // Postavljanje iznad grafika
+        },
+      },
+    ];
 
   public todayProfitData: any;
   public yesterdayProfitData: any;
@@ -129,32 +173,42 @@ export class SolarPanelComponent {
         },
       },
     },
+    plugins: {
+      annotation: {
+        annotations: [],
+      },
+    },
   };
 
   //#region csv dowload
-  downloadCSV(csvContent: string){
+  downloadCSV(csvContent: string) {
     const BOM = '\uFEFF'; // UTF-8 BOM karakter
     const contentWithBOM = BOM + csvContent;
-    const blob = new Blob([contentWithBOM], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([contentWithBOM], {
+      type: 'text/csv;charset=utf-8;',
+    });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'data.csv';
     link.click();
   }
 
-  generateCSV(data: any){
-   let csvContent = 'Sat,' + data.datasets.map((dataset: { label: any; }) => dataset.label).join(',') + '\n';
-   const rows = data.labels.map((label: any, index: string | number) => {
-       const power = data.datasets[0].data[index] || '';
-       const price = data.datasets[1].data[index] || '';
-       const profit = data.datasets[2].data[index] || '';
-      
-       return [label, power, price, profit].join(',');
-   });
+  generateCSV(data: any) {
+    let csvContent =
+      'Sat,' +
+      data.datasets.map((dataset: { label: any }) => dataset.label).join(',') +
+      '\n';
+    const rows = data.labels.map((label: any, index: string | number) => {
+      const power = data.datasets[0].data[index] || '';
+      const price = data.datasets[1].data[index] || '';
+      const profit = data.datasets[2].data[index] || '';
 
-   csvContent += rows.join('\n');
+      return [label, power, price, profit].join(',');
+    });
 
-   this.downloadCSV(csvContent);
+    csvContent += rows.join('\n');
+
+    this.downloadCSV(csvContent);
   }
   //#endregion
 
@@ -162,7 +216,7 @@ export class SolarPanelComponent {
   getYesterdayPower() {
     const yesterday = new Date();
     yesterday.setDate(this.today.getDate() - 1);
-    this.client.getPowerWeather(yesterday).subscribe({
+    this.client.getPowerWeather(yesterday, this.id).subscribe({
       next: (result) => {
         this.powerData = result.data!;
 
@@ -203,7 +257,7 @@ export class SolarPanelComponent {
   }
 
   getTodayPower() {
-    this.client.getPowerWeather(this.today).subscribe({
+    this.client.getPowerWeather(this.today, this.id).subscribe({
       next: (result) => {
         this.powerData = result.data!;
 
@@ -237,6 +291,7 @@ export class SolarPanelComponent {
           ],
         };
 
+
       },
       error: (err) => {
         this.toastr.error(err);
@@ -244,12 +299,17 @@ export class SolarPanelComponent {
     });
   }
 
+  @ViewChild(BaseChartDirective) chart!: BaseChartDirective;
+
   getTomorrowPower() {
     const tomorrow = new Date();
     tomorrow.setDate(this.today.getDate() + 1);
-    this.client.getPowerWeather(tomorrow).subscribe({
+    this.client.getPowerWeather(tomorrow, this.id).subscribe({
       next: (result) => {
         this.powerData = result.data!;
+
+        this.verticalLine1Value=this.powerData.sunrise!.getHours();
+        this.verticalLine2Value= this.powerData.sunset!.getHours();
 
         this.tomorrowChartData = {
           labels: this.timeLabels,
@@ -286,6 +346,7 @@ export class SolarPanelComponent {
       },
     });
   }
+  
   //#endregion
 
   //#region profit
@@ -428,13 +489,16 @@ export class SolarPanelComponent {
   //#region Oninit setup
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    this.getCurrentTemp();
-    this.getCurrentCloudnes();
-    this.getGeneratedPowerSum();
+    // this.setForcastWeather();
+    // this.setHistoryWeather();
 
-    this.getCurrentPower();
-    this.getCurrentPrice();
-    this.getProfitSum();
+    // this.getCurrentTemp();
+    // this.getCurrentCloudnes();
+    // this.getGeneratedPowerSum();
+
+    // this.getCurrentPower();
+    // this.getCurrentPrice();
+    // this.getProfitSum();
 
     this.getYesterdayPower();
     this.getTodayPower();
@@ -442,80 +506,77 @@ export class SolarPanelComponent {
     this.getYesterdayProfit();
     this.getTodayProfit();
     this.getTomorrowProfit();
-
-    //this.setForcastWeather();
-    //this.setHistoryWeather();
   }
   //#endregion
 
   //#region MainPower
   getCurrentTemp() {
     this.client.getCurrentTemp().subscribe({
-      next: (response) =>{
-        this.currentTemp=response.data;
+      next: (response) => {
+        this.currentTemp = response.data;
       },
       error: (err) => {
         this.toastr.error(err);
-      }
+      },
     });
   }
 
   getCurrentCloudnes() {
     this.client.getCurrentClouds().subscribe({
-      next: (response) =>{
-        this.currentCloudnes=response.data;
+      next: (response) => {
+        this.currentCloudnes = response.data;
       },
       error: (err) => {
         this.toastr.error(err);
-      }
+      },
     });
   }
 
   getGeneratedPowerSum() {
     this.client.getGeneratedPowerSum().subscribe({
-      next: (response) =>{
-        this.generatedPowerSum=response.data;
+      next: (response) => {
+        this.generatedPowerSum = response.data;
       },
       error: (err) => {
         this.toastr.error(err);
-      }
+      },
     });
   }
 
   //#endregion
 
   //#region MainProfit
-  getCurrentPower(){
+  getCurrentPower() {
     this.client.getCurrentPower().subscribe({
       next: (response) => {
-        this.currentPower= response.data;
+        this.currentPower = response.data;
       },
-      error: (err)=>{
+      error: (err) => {
         this.toastr.error(err);
-      }
-    })
+      },
+    });
   }
 
-  getCurrentPrice(){
+  getCurrentPrice() {
     this.client.getCurrentPrice().subscribe({
       next: (response) => {
-        this.currentPrice= response.data;
+        this.currentPrice = response.data;
       },
-      error: (err)=>{
+      error: (err) => {
         this.toastr.error(err);
-      }
-    })
+      },
+    });
   }
 
-  getProfitSum(){
+  getProfitSum() {
     this.client.getGeneratedProfitSum().subscribe({
       next: (response) => {
-        this.profitSum= response.data;
+        this.profitSum = response.data;
       },
-      error: (err)=>{
+      error: (err) => {
         this.toastr.error(err);
-      }
-    })
+      },
+    });
   }
   //#endregion
 

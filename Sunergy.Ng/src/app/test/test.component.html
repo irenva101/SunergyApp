@@ -1,0 +1,16 @@
+<div class="container-fluid">
+    <div class="row-md-12 d-flex justify-content-center gap-2 borderb pb-5">
+        <div
+          class="col-md-4 d-flex flex-column align-items-center justify-content-center chart-parameters p-3 rounded m-3"
+        >
+          <canvas
+            baseChart
+            [data]="tomorrowChartData"
+            [options]="chartPowerOptions"
+            [type]="'line'"
+            [plugins]="plugIn"
+          >
+          </canvas>
+        </div>
+      </div>
+</div>
