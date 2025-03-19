@@ -197,7 +197,7 @@ namespace Sunergy.Business.Implemention
 
         }
 
-        public async Task<ResponsePackage<ProfitWeatherDataOut>> GetProfitWeather(DateTime dataIn)
+        public async Task<ResponsePackage<ProfitWeatherDataOut>> GetProfitWeather(DateTime dataIn, int panelId)
         {
             try
             {
@@ -205,11 +205,19 @@ namespace Sunergy.Business.Implemention
                     .Where(p => EF.Functions.DateDiffDay(p.Time, dataIn) == 0)
                     .ToListAsync();
 
+                var resultDay = await _dbContext.PanelWeathers.Where(p => p.Day.Date == dataIn.Date && p.PanelId == panelId && !p.IsDeleted).FirstOrDefaultAsync();
+                if (resultDay == null)
+                {
+                    return new ResponsePackage<ProfitWeatherDataOut>(ResponseStatus.NotFound, "Panel with given id doesn't exist.");
+                }
+
                 var result = new ProfitWeatherDataOut()
                 {
                     Powers = resultForDate.Select(p => p.Produced).ToList(),
                     Prices = resultForDate.Select(p => p.CurrentPrice).ToList(),
                     Profit = resultForDate.Select(p => p.Earning).ToList(),
+                    Sunrise = resultDay.SunriseTime ?? DateTime.MinValue,
+                    Sunset = resultDay.SunsetTime ?? DateTime.MinValue,
                 };
 
                 return new ResponsePackage<ProfitWeatherDataOut>() { Data = result, Message = "Successfully fetched weather data." };

@@ -60,9 +60,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<ProfitWeatherDataOut>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetProfitWeather(DateTime dataIn)
+        public async Task<IActionResult> GetProfitWeather(DateTime dataIn, int id)
         {
-            var result = await _weatherService.GetProfitWeather(dataIn);
+            var result = await _weatherService.GetProfitWeather(dataIn, id);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch profit weather data.");

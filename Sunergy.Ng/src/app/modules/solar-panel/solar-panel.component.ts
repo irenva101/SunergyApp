@@ -11,10 +11,13 @@ import {
   provideCharts,
   withDefaultRegisterables,
 } from 'ng2-charts';
-import { ChartOptions, Plugin } from 'chart.js';
+import { Chart, ChartOptions, Plugin } from 'chart.js';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import 'chartjs-plugin-annotation';
 import 'chartjs-adapter-date-fns';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+Chart.register(annotationPlugin);
 
 @Component({
   selector: 'app-solar-panel',
@@ -30,18 +33,14 @@ export class SolarPanelComponent {
   profitData: ProfitWeatherDataOut = new ProfitWeatherDataOut();
   today = new Date();
 
+  @ViewChild(BaseChartDirective) chart!: BaseChartDirective;
+
   currentTemp: number | undefined;
   currentCloudnes: number | undefined;
   generatedPowerSum: number | undefined;
   currentPower: number | undefined;
   currentPrice: number | undefined;
   profitSum: number | undefined;
-
-  timeLabels = Array.from({ length: 24 }, (_, i) => {
-    const date = new Date(1970, 0, 1); // 1. januar 1970. godine
-    date.setHours(i, 0, 0, 0); // Postavi sate (00:00, 01:00, ... 23:00)
-    return date.getTime(); // Pretvori u timestamp
-  });
 
   public todayChartData: any;
   public yesterdayChartData: any;
@@ -54,16 +53,8 @@ export class SolarPanelComponent {
           display: true,
           text: 'Sati',
         },
-        type: 'time',
-        time: {
-          unit: 'hour',
-          tooltipFormat: 'HH:mm',
-          displayFormats: {
-            hour: 'HH:mm'
-          }
-        },
-        min: this.timeLabels[0],
-        max: this.timeLabels[this.timeLabels.length-1],
+        min: 0,
+        max: 23,
       },
       y: {
         type: 'linear',
@@ -86,58 +77,35 @@ export class SolarPanelComponent {
     },
     plugins: {
       annotation: {
-        annotations: [],
+        annotations: {
+          sunrise: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'orange',
+            borderWidth: 1,
+            label: {
+              content: 'Sunrise',
+              display: true,
+              position: 'start',
+            },
+          },
+          sunset: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'orange',
+            borderWidth: 1,
+            label: {
+              content: 'Sunset',
+              display: true,
+              position: 'start',
+            },
+          },
+        },
       },
     },
   };
-
-  public verticalLine1Value: number = 0;
-  public verticalLine2Value: number = 0
-
-  public plugIn: Plugin<'line'>[] = [
-      {
-        id: 'verticalLine1',
-        beforeDraw: (chart) => {
-          const ctx = chart.ctx;
-          const xPosition = chart.scales['x'].getPixelForValue(
-            this.verticalLine1Value
-          ); // Promeni na odgovarajuću vrednost
-          ctx.beginPath();
-          ctx.moveTo(xPosition, chart.chartArea.top);
-          ctx.lineTo(xPosition, chart.chartArea.bottom);
-          ctx.strokeStyle = 'orange'; // Boja linije
-          ctx.lineWidth = 1; // Debljina linije
-          ctx.stroke();
-  
-          // Dodaj labelu "Sunrise"
-          ctx.font = 'bold 12px Arial'; // Stil fonta
-          ctx.fillStyle = 'orange'; // Boja teksta
-          ctx.textAlign = 'center'; // Poravnanje teksta
-          ctx.fillText('Sunrise', xPosition, chart.chartArea.top +10); // Postavljanje iznad grafika
-        },
-      },
-      {
-        id: 'verticalLine2',
-        beforeDraw: (chart) => {
-          const ctx = chart.ctx;
-          const xPosition = chart.scales['x'].getPixelForValue(
-           this.verticalLine2Value
-          ); // Promeni na odgovarajuću vrednost
-          ctx.beginPath();
-          ctx.moveTo(xPosition, chart.chartArea.top);
-          ctx.lineTo(xPosition, chart.chartArea.bottom);
-          ctx.strokeStyle = 'orange'; // Boja linije
-          ctx.lineWidth = 1; // Debljina linije
-          ctx.stroke();
-  
-          // Dodaj labelu "Sunset"
-          ctx.font = 'bold 12px Arial'; // Stil fonta
-          ctx.fillStyle = 'orange'; // Boja teksta
-          ctx.textAlign = 'center'; // Poravnanje teksta
-          ctx.fillText('Sunset', xPosition, chart.chartArea.top + 10); // Postavljanje iznad grafika
-        },
-      },
-    ];
 
   public todayProfitData: any;
   public yesterdayProfitData: any;
@@ -150,6 +118,8 @@ export class SolarPanelComponent {
           display: true,
           text: 'Sati',
         },
+        min: 0,
+        max: 23,
       },
       y: {
         type: 'linear',
@@ -168,14 +138,36 @@ export class SolarPanelComponent {
           text: 'Cena (EUR) i Profit (EUR)',
         },
         beginAtZero: true,
-        grid: {
-          drawOnChartArea: false, // Ovdje možete odlučiti da li želite da mreža za drugu osu bude vidljiva
-        },
       },
     },
     plugins: {
       annotation: {
-        annotations: [],
+        annotations: {
+          sunrise: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'orange',
+            borderWidth: 1,
+            label: {
+              content: 'Sunrise',
+              display: true,
+              position: 'start',
+            },
+          },
+          sunset: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'orange',
+            borderWidth: 1,
+            label: {
+              content: 'Sunset',
+              display: true,
+              position: 'start',
+            },
+          },
+        },
       },
     },
   };
@@ -220,8 +212,21 @@ export class SolarPanelComponent {
       next: (result) => {
         this.powerData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartPowerOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartPowerOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
         this.yesterdayChartData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (kW)',
@@ -261,8 +266,21 @@ export class SolarPanelComponent {
       next: (result) => {
         this.powerData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartPowerOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartPowerOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
         this.todayChartData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (kW)',
@@ -299,8 +317,6 @@ export class SolarPanelComponent {
     });
   }
 
-  @ViewChild(BaseChartDirective) chart!: BaseChartDirective;
-
   getTomorrowPower() {
     const tomorrow = new Date();
     tomorrow.setDate(this.today.getDate() + 1);
@@ -308,11 +324,21 @@ export class SolarPanelComponent {
       next: (result) => {
         this.powerData = result.data!;
 
-        this.verticalLine1Value=this.powerData.sunrise!.getHours();
-        this.verticalLine2Value= this.powerData.sunset!.getHours();
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartPowerOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartPowerOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
 
         this.tomorrowChartData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (kW)',
@@ -353,12 +379,25 @@ export class SolarPanelComponent {
   getYesterdayProfit() {
     const yesterday = new Date();
     yesterday.setDate(this.today.getDate() - 1);
-    this.client.getProfitWeather(yesterday).subscribe({
+    this.client.getProfitWeather(yesterday, this.id).subscribe({
       next: (result) => {
         this.profitData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartProfitOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartProfitOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
         this.yesterdayProfitData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (W)',
@@ -394,12 +433,25 @@ export class SolarPanelComponent {
   }
 
   getTodayProfit() {
-    this.client.getProfitWeather(this.today).subscribe({
+    this.client.getProfitWeather(this.today, this.id).subscribe({
       next: (result) => {
         this.profitData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartProfitOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartProfitOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
         this.todayProfitData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (kW)',
@@ -437,12 +489,25 @@ export class SolarPanelComponent {
   getTomorrowProfit() {
     const tomorrow = new Date();
     tomorrow.setDate(this.today.getDate() + 1);
-    this.client.getProfitWeather(tomorrow).subscribe({
+    this.client.getProfitWeather(tomorrow, this.id).subscribe({
       next: (result) => {
         this.profitData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartProfitOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartProfitOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
         this.tomorrowProfitData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
           datasets: [
             {
               label: 'Snaga (kW)',

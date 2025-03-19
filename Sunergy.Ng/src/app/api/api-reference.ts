@@ -98,9 +98,10 @@ export interface IClient {
     getPowerWeather(dataIn: Date | undefined, id: number | undefined): Observable<PowerWeatherDataOutResponsePackage>;
     /**
      * @param dataIn (optional) 
+     * @param id (optional) 
      * @return Success
      */
-    getProfitWeather(dataIn: Date | undefined): Observable<ProfitWeatherDataOutResponsePackage>;
+    getProfitWeather(dataIn: Date | undefined, id: number | undefined): Observable<ProfitWeatherDataOutResponsePackage>;
     /**
      * @return Success
      */
@@ -1195,14 +1196,19 @@ export class Client implements IClient {
 
     /**
      * @param dataIn (optional) 
+     * @param id (optional) 
      * @return Success
      */
-    getProfitWeather(dataIn: Date | undefined): Observable<ProfitWeatherDataOutResponsePackage> {
+    getProfitWeather(dataIn: Date | undefined, id: number | undefined): Observable<ProfitWeatherDataOutResponsePackage> {
         let url_ = this.baseUrl + "/getProfitWeather?";
         if (dataIn === null)
             throw new Error("The parameter 'dataIn' cannot be null.");
         else if (dataIn !== undefined)
             url_ += "dataIn=" + encodeURIComponent(dataIn ? "" + dataIn.toISOString() : "") + "&";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2268,6 +2274,8 @@ export class ProfitWeatherDataOut implements IProfitWeatherDataOut {
     powers?: number[] | undefined;
     prices?: number[] | undefined;
     profit?: number[] | undefined;
+    sunset?: Date;
+    sunrise?: Date;
 
     constructor(data?: IProfitWeatherDataOut) {
         if (data) {
@@ -2295,6 +2303,8 @@ export class ProfitWeatherDataOut implements IProfitWeatherDataOut {
                 for (let item of _data["profit"])
                     this.profit!.push(item);
             }
+            this.sunset = _data["sunset"] ? new Date(_data["sunset"].toString()) : <any>undefined;
+            this.sunrise = _data["sunrise"] ? new Date(_data["sunrise"].toString()) : <any>undefined;
         }
     }
 
@@ -2322,6 +2332,8 @@ export class ProfitWeatherDataOut implements IProfitWeatherDataOut {
             for (let item of this.profit)
                 data["profit"].push(item);
         }
+        data["sunset"] = this.sunset ? this.sunset.toISOString() : <any>undefined;
+        data["sunrise"] = this.sunrise ? this.sunrise.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -2330,6 +2342,8 @@ export interface IProfitWeatherDataOut {
     powers?: number[] | undefined;
     prices?: number[] | undefined;
     profit?: number[] | undefined;
+    sunset?: Date;
+    sunrise?: Date;
 }
 
 export class ProfitWeatherDataOutResponsePackage implements IProfitWeatherDataOutResponsePackage {

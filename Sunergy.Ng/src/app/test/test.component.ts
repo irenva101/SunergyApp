@@ -6,11 +6,13 @@ import {
   withDefaultRegisterables,
 } from 'ng2-charts';
 import { Client, PowerWeatherDataOut } from '../api/api-reference';
-import { ChartOptions, Plugin } from 'chart.js';
+import { ChartOptions, Plugin, Chart } from 'chart.js';
 import { Toast, ToastrModule } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import 'chartjs-plugin-annotation';
-import Annotation from 'chartjs-plugin-annotation';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+Chart.register(annotationPlugin);
 
 @Component({
   selector: 'app-test',
@@ -38,35 +40,33 @@ export class TestComponent implements OnInit {
     this.getTomorrowPower();
   }
 
-  timeLabels = Array.from({ length: 24 }, (_, i) => {
-    const date = new Date(1970, 0, 1); // 1. januar 1970. godine
-    date.setHours(i, 0, 0, 0); // Postavi sate (00:00, 01:00, ... 23:00)
-    return date.getTime(); // Pretvori u timestamp
-  });
-
   public chartPowerOptions: ChartOptions<'line'> | undefined = {
     responsive: true,
     plugins: {
       annotation: {
         annotations: {
-          line1: {
-            type: 'label',
-            xValue: 2.5,
-            yValue: 60,
-            backgroundColor: 'rgba(432,245,245)',
-            content: ['This is my text', 'This is my text, second line'],
-            font: {
-              size: 18,
+          sunrise: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'orange',
+            borderWidth: 3,
+            label: {
+              content: 'Sunrise',
+              display: true,
+              position: 'start',
             },
           },
-          line2: {
-            type: 'label',
-            xValue: 2.5,
-            yValue: 60,
-            backgroundColor: 'rgba(245,245,245)',
-            content: ['This is my text', 'This is my text, second line'],
-            font: {
-              size: 18,
+          sunset: {
+            type: 'line',
+            xMin: 0,
+            xMax: 0,
+            borderColor: 'blue',
+            borderWidth: 1,
+            label: {
+              content: 'Sunset',
+              display: true,
+              position: 'start',
             },
           },
         },
@@ -78,16 +78,8 @@ export class TestComponent implements OnInit {
           display: true,
           text: 'Sati',
         },
-        type: 'time',
-        time: {
-          unit: 'hour',
-          tooltipFormat: 'HH:mm',
-          displayFormats: {
-            hour: 'HH:mm',
-          },
-        },
-        min: this.timeLabels[0],
-        max: this.timeLabels[this.timeLabels.length - 1],
+        min: 0,
+        max: 23,
       },
       y: {
         type: 'linear',
@@ -110,51 +102,6 @@ export class TestComponent implements OnInit {
     },
   };
 
-  public plugIn: Plugin<'line'>[] = [
-    {
-      id: 'verticalLine1',
-      beforeDraw: (chart) => {
-        const ctx = chart.ctx;
-        const xPosition = chart.scales['x'].getPixelForValue(
-          5
-        ); // Promeni na odgovarajuću vrednost
-        ctx.beginPath();
-        ctx.moveTo(xPosition, chart.chartArea.top);
-        ctx.lineTo(xPosition, chart.chartArea.bottom);
-        ctx.strokeStyle = 'orange'; // Boja linije
-        ctx.lineWidth = 1; // Debljina linije
-        ctx.stroke();
-
-        // Dodaj labelu "Sunrise"
-        ctx.font = 'bold 12px Arial'; // Stil fonta
-        ctx.fillStyle = 'orange'; // Boja teksta
-        ctx.textAlign = 'center'; // Poravnanje teksta
-        ctx.fillText('Sunrise', xPosition, chart.chartArea.top +10); // Postavljanje iznad grafika
-      },
-    },
-    {
-      id: 'verticalLine2',
-      beforeDraw: (chart) => {
-        const ctx = chart.ctx;
-        const xPosition = chart.scales['x'].getPixelForValue(
-          17
-        ); // Promeni na odgovarajuću vrednost
-        ctx.beginPath();
-        ctx.moveTo(xPosition, chart.chartArea.top);
-        ctx.lineTo(xPosition, chart.chartArea.bottom);
-        ctx.strokeStyle = 'orange'; // Boja linije
-        ctx.lineWidth = 1; // Debljina linije
-        ctx.stroke();
-
-        // Dodaj labelu "Sunset"
-        ctx.font = 'bold 12px Arial'; // Stil fonta
-        ctx.fillStyle = 'orange'; // Boja teksta
-        ctx.textAlign = 'center'; // Poravnanje teksta
-        ctx.fillText('Sunset', xPosition, chart.chartArea.top + 10); // Postavljanje iznad grafika
-      },
-    },
-  ];
-
   getTomorrowPower() {
     const tomorrow = new Date();
     tomorrow.setDate(this.today.getDate() + 1);
@@ -162,8 +109,23 @@ export class TestComponent implements OnInit {
       next: (result) => {
         this.powerData = result.data!;
 
+        const sunriseTime = result.data?.sunrise?.getHours();
+        const sunsetTime = result.data?.sunset?.getHours();
+
+        if (this.chartPowerOptions?.plugins?.annotation?.annotations) {
+          const annotations = this.chartPowerOptions.plugins.annotation
+            .annotations as Record<string, any>;
+
+          annotations['sunrise'].xMin = sunriseTime;
+          annotations['sunrise'].xMax = sunriseTime;
+          annotations['sunset'].xMin = sunsetTime;
+          annotations['sunset'].xMax = sunsetTime;
+        }
+
+        this.chart?.update();
+
         this.tomorrowChartData = {
-          labels: this.timeLabels,
+          labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
           datasets: [
             {
               label: 'Snaga (kW)',
