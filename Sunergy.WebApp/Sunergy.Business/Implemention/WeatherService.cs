@@ -317,6 +317,10 @@ namespace Sunergy.Business.Implemention
                             // Solar intensity decreases as the distance from midday increases
                             solarIntensity = 1.0 - normalizedTime;
                         }
+                        else
+                        {
+                            solarIntensity = 0.0;
+                        }
                         //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
 
@@ -462,6 +466,10 @@ namespace Sunergy.Business.Implemention
                             // Solar intensity decreases as the distance from midday increases
                             solarIntensity = 1.0 - normalizedTime;
                         }
+                        else
+                        {
+                            solarIntensity = 0.0;
+                        }
                         //power calculation 
                         var k = 0 * hour.Cloud / 100 + 3 / 85 * hour.TempC + 3.0588;
 
@@ -526,6 +534,46 @@ namespace Sunergy.Business.Implemention
             }
             return new ResponsePackageNoData(ResponseStatus.InternalServerError, "Something went wrong when trying to parse JSON to database.");
 
+        }
+
+        public async Task<ResponsePackage<double>> GetCumulativePower(int userId)
+        {
+            try
+            {
+                var currentTime = DateTime.Now;
+                var result = await _dbContext.PowerPlants
+                    .Where(p => p.UserId == userId)
+                    .SelectMany(p => _dbContext.PanelWeathers
+                    .Where(pw => pw.PanelId == p.Id)
+                    .SelectMany(pw => _dbContext.PanelWeatherHours
+                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime)))
+                    .SumAsync(pwh => pwh.Produced);
+                return new ResponsePackage<double>() { Data = result, Message = "Successfuly fetched cumulated power." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<double> { Message = ex.Message };
+            }
+        }
+
+        public async Task<ResponsePackage<double>> GetCumulativeProfit(int userId)
+        {
+            try
+            {
+                var currentTime = DateTime.Now;
+                var result = await _dbContext.PowerPlants
+                    .Where(p => p.UserId == userId)
+                    .SelectMany(p => _dbContext.PanelWeathers
+                    .Where(pw => pw.PanelId == p.Id)
+                    .SelectMany(pw => _dbContext.PanelWeatherHours
+                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime)))
+                    .SumAsync(pwh => pwh.Earning);
+                return new ResponsePackage<double>() { Data = result, Message = "Successfuly fetched cumulated earned." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<double> { Message = ex.Message };
+            }
         }
     }
 }

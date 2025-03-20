@@ -15,6 +15,8 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackage<double>> GetCurrentPower();
         Task<ResponsePackage<double>> GetCurrentPrice();
         Task<ResponsePackage<double>> GetGeneratedProfitSum();
+        Task<ResponsePackage<double>> GetCumulativePower(int userId);
+        Task<ResponsePackage<double>> GetCumulativeProfit(int userId);
 
     }
 }

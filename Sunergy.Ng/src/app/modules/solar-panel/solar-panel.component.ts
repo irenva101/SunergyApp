@@ -557,13 +557,13 @@ export class SolarPanelComponent {
     // this.setForcastWeather();
     // this.setHistoryWeather();
 
-    // this.getCurrentTemp();
-    // this.getCurrentCloudnes();
-    // this.getGeneratedPowerSum();
+    this.getCurrentTemp();
+    this.getCurrentCloudnes();
+    this.getGeneratedPowerSum();
 
-    // this.getCurrentPower();
-    // this.getCurrentPrice();
-    // this.getProfitSum();
+    this.getCurrentPower();
+    this.getCurrentPrice();
+    this.getProfitSum();
 
     this.getYesterdayPower();
     this.getTodayPower();

@@ -154,5 +154,33 @@ namespace Sunergy.WebApp.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getCumulativePower")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCumulativePower(int userId)
+        {
+            var result = await _weatherService.GetCumulativePower(userId);
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch cumualted power.");
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("getCumulativeProfit")]
+        [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCumulativeProfit(int userId)
+        {
+            var result = await _weatherService.GetCumulativeProfit(userId);
+            if (result == null)
+            {
+                return StatusCode((int)Response.StatusCode, $"Failed to fetch cumualted power.");
+            }
+            return Ok(result);
+        }
+
     }
 }
