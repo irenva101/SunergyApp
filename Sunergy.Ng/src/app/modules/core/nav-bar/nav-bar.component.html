@@ -2,9 +2,11 @@
     <div class="row g-0 m-0 mt-5 d-flex align-items-center">
         <div class="col-md-12 ">
             <ul class="nav nav-tabs">
+              @if(user.role !== Role.Admin){
               <li class="nav-item">
                 <a class="nav-link" routerLink="/home" [ngClass]="{ 'active-tab': isActive('/home') }">Home</a>
               </li>
+            }
             @if(user.role===Role.User){
               <li class="nav-item">
                 <a class="nav-link" routerLink="/map" [ngClass]="{ 'active-tab': isActive('/map') }">Map</a>
@@ -21,9 +23,6 @@
               } 
               <li class="nav-item">
                 <a class="nav-link" routerLink="/logout" [ngClass]="{ 'active-tab': isActive('/logout') }">LogOut</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/test" [ngClass]="{ 'active-tab': isActive('/test') }">Test</a>
               </li>
             </ul>
         </div>

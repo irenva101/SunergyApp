@@ -191,9 +191,9 @@ export class SolarPanelComponent {
       data.datasets.map((dataset: { label: any }) => dataset.label).join(',') +
       '\n';
     const rows = data.labels.map((label: any, index: string | number) => {
-      const power = data.datasets[0].data[index] || '';
-      const price = data.datasets[1].data[index] || '';
-      const profit = data.datasets[2].data[index] || '';
+      const power = data.datasets[0].data[index] ?? 0;
+      const price = data.datasets[1].data[index] ?? 0;
+      const profit = data.datasets[2].data[index] ?? 0;
 
       return [label, power, price, profit].join(',');
     });

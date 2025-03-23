@@ -35,6 +35,13 @@ namespace Sunergy.Business.Implemention
                 var resultForDateAndHour = await _dbContext.PanelWeatherHours
                     .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
                     .FirstOrDefaultAsync();
+
+                if (resultForDateAndHour == null)
+                    return new ResponsePackage<double>()
+                    {
+                        Data = 0,
+                        Message = "There is no any data."
+                    };
                 return new ResponsePackage<double>()
                 {
                     Data = resultForDateAndHour.Cloudiness,
@@ -58,6 +65,13 @@ namespace Sunergy.Business.Implemention
                 var resultForDateAndHour = await _dbContext.PanelWeatherHours
                     .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
                     .FirstOrDefaultAsync();
+
+                if (resultForDateAndHour == null)
+                    return new ResponsePackage<double>()
+                    {
+                        Data = 0,
+                        Message = "There is no any data."
+                    };
                 return new ResponsePackage<double>()
                 {
                     Data = resultForDateAndHour.Produced,
@@ -80,6 +94,12 @@ namespace Sunergy.Business.Implemention
                 var resultForDateAndHour = await _dbContext.PanelWeatherHours
                     .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
                     .FirstOrDefaultAsync();
+                if (resultForDateAndHour == null)
+                    return new ResponsePackage<double>()
+                    {
+                        Data = 0,
+                        Message = "There is no any data."
+                    };
                 return new ResponsePackage<double>()
                 {
                     Data = resultForDateAndHour.CurrentPrice,
@@ -126,6 +146,13 @@ namespace Sunergy.Business.Implemention
                 var resultForDateAndHour = await _dbContext.PanelWeatherHours
                     .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
                     .FirstOrDefaultAsync();
+
+                if (resultForDateAndHour == null)
+                    return new ResponsePackage<double>()
+                    {
+                        Data = 0,
+                        Message = "There is no any data."
+                    };
                 return new ResponsePackage<double>()
                 {
                     Data = resultForDateAndHour.Temperature,

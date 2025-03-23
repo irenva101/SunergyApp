@@ -25,9 +25,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<List<PanelDto>>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetAll(DataIn<string> dataIn)
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(await _panelService.Query(dataIn, GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));
+            return Ok(await _panelService.Query(GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));
         }
 
         [HttpPost("getAllPanels")]

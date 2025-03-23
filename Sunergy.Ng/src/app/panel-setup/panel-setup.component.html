@@ -64,6 +64,28 @@
           }
         </div>
       </div>
+      <div class="form-item">
+        <label class="form-label" for="installedPower"
+          >Efikasnost:</label
+        >
+        <div class="form-input">
+          <input
+            id="efficiency"
+            [(ngModel)]="data.efficiency"
+            #efficiency="ngModel"
+            name="efficiency"
+            type="number"
+            required
+          />
+          @if (crudform.submitted && efficiency.invalid) {
+          <div class="validation-error">Obavezno polje!</div>
+          } @else if (!efficiency.valid) {
+          <div class="validation-instruction">
+            Unesite vrednost efikasnosti(0-1).
+          </div>
+          }
+        </div>
+      </div>
       @if(!isLatLongSet){
         <div class="form-item">
           <label class="form-label" for="latitude"
@@ -113,11 +135,6 @@
       <div>
         <button class="add" (click)="isMapOpen=true">Postavi elektranu na mapi</button>
       </div>
-      @if(isMapOpen){
-        <!-- <div class="row g-0 m-0 d-flex mt-5 mb-5 align-items-center map-container">
-          <app-map (locationSelected)="onLocationSelected($event)"></app-map>
-        </div> -->
-      }
     </form>
   </div>
 </div>

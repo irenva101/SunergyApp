@@ -27,10 +27,9 @@ export interface IClient {
      */
     register(body: RegisterDataIn | undefined): Observable<void>;
     /**
-     * @param body (optional) 
      * @return Success
      */
-    query(body: StringDataIn | undefined): Observable<PanelDtoListResponsePackage>;
+    query(): Observable<PanelDtoListResponsePackage>;
     /**
      * @return Success
      */
@@ -264,21 +263,16 @@ export class Client implements IClient {
     }
 
     /**
-     * @param body (optional) 
      * @return Success
      */
-    query(body: StringDataIn | undefined): Observable<PanelDtoListResponsePackage> {
+    query(): Observable<PanelDtoListResponsePackage> {
         let url_ = this.baseUrl + "/api/PowePlant/query";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -2111,6 +2105,7 @@ export class PanelDataIn implements IPanelDataIn {
     id?: number;
     name?: string | undefined;
     installedPower?: number;
+    efficiency?: number;
     longitude?: number;
     latitude?: number;
     panelType?: PanelType;
@@ -2129,6 +2124,7 @@ export class PanelDataIn implements IPanelDataIn {
             this.id = _data["id"];
             this.name = _data["name"];
             this.installedPower = _data["installedPower"];
+            this.efficiency = _data["efficiency"];
             this.longitude = _data["longitude"];
             this.latitude = _data["latitude"];
             this.panelType = _data["panelType"];
@@ -2147,6 +2143,7 @@ export class PanelDataIn implements IPanelDataIn {
         data["id"] = this.id;
         data["name"] = this.name;
         data["installedPower"] = this.installedPower;
+        data["efficiency"] = this.efficiency;
         data["longitude"] = this.longitude;
         data["latitude"] = this.latitude;
         data["panelType"] = this.panelType;
@@ -2158,6 +2155,7 @@ export interface IPanelDataIn {
     id?: number;
     name?: string | undefined;
     installedPower?: number;
+    efficiency?: number;
     longitude?: number;
     latitude?: number;
     panelType?: PanelType;
@@ -2598,50 +2596,6 @@ export enum Role {
     User = "User",
     Admin = "Admin",
     Guest = "Guest",
-}
-
-export class StringDataIn implements IStringDataIn {
-    pageSize?: number;
-    currentPage?: number;
-    data?: string | undefined;
-
-    constructor(data?: IStringDataIn) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.pageSize = _data["pageSize"];
-            this.currentPage = _data["currentPage"];
-            this.data = _data["data"];
-        }
-    }
-
-    static fromJS(data: any): StringDataIn {
-        data = typeof data === 'object' ? data : {};
-        let result = new StringDataIn();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["pageSize"] = this.pageSize;
-        data["currentPage"] = this.currentPage;
-        data["data"] = this.data;
-        return data;
-    }
-}
-
-export interface IStringDataIn {
-    pageSize?: number;
-    currentPage?: number;
-    data?: string | undefined;
 }
 
 export class StringResponsePackage implements IStringResponsePackage {

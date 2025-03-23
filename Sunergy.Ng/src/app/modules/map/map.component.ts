@@ -16,13 +16,17 @@ export class MapComponent implements OnInit {
   private centroid: L.LatLngExpression = [45.2671, 19.8335]; //
   panels: PanelDto[] = [];
   selectedPanel: PanelDto | null = null;
-  clicked: boolean = false;
 
   constructor(
     private router: Router,
     private client: Client,
     private toster: ToastrService
   ) {}
+
+  ngOnInit(): void {
+    this.initMap();
+    this.getAllPanels();
+  }
 
   private initMap(): void {
     this.map = L.map('map', {
@@ -42,8 +46,7 @@ export class MapComponent implements OnInit {
     tiles.addTo(this.map);
 
     this.map.on('click', (event: L.LeafletMouseEvent) => {
-      if (this.selectedPanel) {
-        console.log('NE');
+      if (!this.selectedPanel) {
         const lat = parseFloat(event.latlng.lat.toFixed(4));
         const lng = parseFloat(event.latlng.lng.toFixed(4));
         this.router.navigate(['/panel-setup'], {
@@ -53,20 +56,14 @@ export class MapComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.initMap();
-    this.getAllPanels();
-  }
-
   getAllPanels() {
     this.client.getAllPanelsByUserId().subscribe({
       next: (response) => {
         this.panels = response.data!;
 
-        // Kreiranje custom ikone za solarni panel
         const solarIcon = L.icon({
-          iconUrl: 'solar-panel.svg', // Putanja do tvoje ikone
-          iconSize: [32, 32], // Dimenzije ikone
+          iconUrl: 'solar-panel.svg',
+          iconSize: [32, 32],
           iconAnchor: [16, 32], // Prilagoditi tačku koju ikona označava
           popupAnchor: [0, -32], // Pozicija popup-a u odnosu na ikonu
         });
@@ -92,8 +89,7 @@ export class MapComponent implements OnInit {
           });
 
           marker.on('click', () => {
-            console.log('Kliknuto na marker!');
-            this.selectedPanel=panel;// Zaustavi propagaciju događaja na mapu
+            this.selectedPanel=panel;
           });
         });
       },

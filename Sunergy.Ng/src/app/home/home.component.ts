@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Client, PanelDto, StringDataIn } from '../api/api-reference';
+import { Client, PanelDto } from '../api/api-reference';
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { ThemeService } from 'ng2-charts';
 
 @Component({
   selector: 'app-home',
@@ -13,11 +12,6 @@ import { ThemeService } from 'ng2-charts';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  requestData = new StringDataIn({
-    pageSize: 10,
-    currentPage: 1,
-    data: undefined,
-  });
   data: PanelDto[] | undefined = [];
   weather: any;
   private jwtService = new JwtHelperService();
@@ -61,7 +55,7 @@ export class HomeComponent implements OnInit {
   }
 
   reloadTable(page?: number) {
-    this.client.query(this.requestData).subscribe({
+    this.client.query().subscribe({
       next: (response) => {
         this.data = response.data;
       },

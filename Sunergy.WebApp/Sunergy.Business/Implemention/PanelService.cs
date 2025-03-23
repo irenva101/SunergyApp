@@ -156,7 +156,7 @@ namespace Sunergy.Business.Implemention
             }
         }
 
-        public async Task<ResponsePackage<List<PanelDto>>> Query(DataIn<string> dataIn, int? userId, Role? role)
+        public async Task<ResponsePackage<List<PanelDto>>> Query(int? userId, Role? role)
         {
             var allPanels = _dbContext.PowerPlants.Where(x => x.IsDeleted == false);
 
@@ -164,9 +164,6 @@ namespace Sunergy.Business.Implemention
                 allPanels = allPanels.Where(x => x.UserId == userId);
 
             var users = await allPanels.OrderByDescending(x => x.Id)
-                .Skip((dataIn.CurrentPage - 1) * dataIn.PageSize)
-                .Take(dataIn.PageSize)
-                .AsNoTracking()
                 .ToListAsync();
 
             var dataDto = _mapper.Map<List<PanelDto>>(users);
@@ -184,6 +181,7 @@ namespace Sunergy.Business.Implemention
                 var user = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => x.IsDeleted == false && x.Id == userId);
 
                 user.InstalledPower = dataIn.InstalledPower;
+                user.Efficiency = dataIn.Efficiency;
                 user.Name = dataIn.Name;
                 user.Longitude = dataIn.Longitude;
                 user.Latitude = dataIn.Latitude;
@@ -198,6 +196,7 @@ namespace Sunergy.Business.Implemention
                     Longitude = dataIn.Longitude,
                     Latitude = dataIn.Latitude,
                     InstalledPower = dataIn.InstalledPower,
+                    Efficiency = dataIn.Efficiency,
                     UserId = userId,
                     Created = DateTime.UtcNow,
                     LastUpdateTime = DateTime.UtcNow,

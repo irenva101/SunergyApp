@@ -32,7 +32,7 @@ export class PanelSetupComponent implements OnInit {
 
   onSubmit() {
     this.client.save(this.data).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastr.success("Uspesno ste postavili elektranu.");
         this.routeNav.navigate(['/map']);
       },
