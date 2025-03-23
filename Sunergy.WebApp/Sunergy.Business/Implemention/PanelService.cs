@@ -120,6 +120,7 @@ namespace Sunergy.Business.Implemention
                     Name = x.Name,
                     Longitude = x.Longitude,
                     Latitude = x.Latitude,
+                    Efficiency = x.Efficiency,
 
                 }).AsNoTracking()
                 .ToListAsync();
