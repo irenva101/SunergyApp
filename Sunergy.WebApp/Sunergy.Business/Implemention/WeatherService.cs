@@ -25,16 +25,22 @@ namespace Sunergy.Business.Implemention
             _apiKey = appSettings.Value.OpenWeatherApiKey;
         }
 
-        public async Task<ResponsePackage<double>> GetCurrentClouds()
+        public async Task<ResponsePackage<double>> GetCurrentClouds(int panelId)
         {
             try
             {
                 DateTime now = DateTime.Now;
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
-                var resultForDateAndHour = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
-                    .FirstOrDefaultAsync();
+                double resultForDateAndHour = await _dbContext.PanelWeatherHours
+            .Include(p => p.PanelWeather)
+            .ThenInclude(p => p.Panel)
+            .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                        p.PanelWeather.PanelId == panelId &&
+                        p.Time.Date == today &&
+                        p.Time.Hour == hourNow &&
+                        !p.IsDeleted).Select(p => p.Cloudiness)
+            .FirstOrDefaultAsync();
 
                 if (resultForDateAndHour == null)
                     return new ResponsePackage<double>()
@@ -44,7 +50,7 @@ namespace Sunergy.Business.Implemention
                     };
                 return new ResponsePackage<double>()
                 {
-                    Data = resultForDateAndHour.Cloudiness,
+                    Data = resultForDateAndHour,
                     Message = "Successfully fetched weather data."
                 };
             }
@@ -55,16 +61,22 @@ namespace Sunergy.Business.Implemention
 
         }
 
-        public async Task<ResponsePackage<double>> GetCurrentPower()
+        public async Task<ResponsePackage<double>> GetCurrentPower(int panelId)
         {
             try
             {
                 DateTime now = DateTime.Now;
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
-                var resultForDateAndHour = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
-                    .FirstOrDefaultAsync();
+                double resultForDateAndHour = await _dbContext.PanelWeatherHours
+            .Include(p => p.PanelWeather)
+            .ThenInclude(p => p.Panel)
+            .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                        p.PanelWeather.PanelId == panelId &&
+                        p.Time.Date == today &&
+                        p.Time.Hour == hourNow &&
+                        !p.IsDeleted).Select(p => p.Produced)
+            .FirstOrDefaultAsync();
 
                 if (resultForDateAndHour == null)
                     return new ResponsePackage<double>()
@@ -74,7 +86,7 @@ namespace Sunergy.Business.Implemention
                     };
                 return new ResponsePackage<double>()
                 {
-                    Data = resultForDateAndHour.Produced,
+                    Data = resultForDateAndHour,
                     Message = "Successfully fetched weather data."
                 };
             }
@@ -84,16 +96,22 @@ namespace Sunergy.Business.Implemention
             }
         }
 
-        public async Task<ResponsePackage<double>> GetCurrentPrice()
+        public async Task<ResponsePackage<double>> GetCurrentPrice(int panelId)
         {
             try
             {
                 DateTime now = DateTime.Now;
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
-                var resultForDateAndHour = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
-                    .FirstOrDefaultAsync();
+                double resultForDateAndHour = await _dbContext.PanelWeatherHours
+             .Include(p => p.PanelWeather)
+             .ThenInclude(p => p.Panel)
+             .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                         p.PanelWeather.PanelId == panelId &&
+                         p.Time.Date == today &&
+                         p.Time.Hour == hourNow &&
+                         !p.IsDeleted).Select(p => p.Earning)
+             .FirstOrDefaultAsync();
                 if (resultForDateAndHour == null)
                     return new ResponsePackage<double>()
                     {
@@ -102,7 +120,7 @@ namespace Sunergy.Business.Implemention
                     };
                 return new ResponsePackage<double>()
                 {
-                    Data = resultForDateAndHour.CurrentPrice,
+                    Data = resultForDateAndHour,
                     Message = "Successfully fetched weather data."
                 };
             }
@@ -112,7 +130,7 @@ namespace Sunergy.Business.Implemention
             }
         }
 
-        public async Task<ResponsePackage<double>> GetGeneratedProfitSum()
+        public async Task<ResponsePackage<double>> GetGeneratedProfitSum(int panelId)
         {
             try
             {
@@ -120,32 +138,39 @@ namespace Sunergy.Business.Implemention
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
 
-                var rowsBeforeNow = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time <= now)
-                    .ToListAsync();
+                double? totalEarnings = await _dbContext.PanelWeatherHours
+            .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                        p.PanelWeather.PanelId == panelId &&
+                        p.Time <= now)
+            .SumAsync(p => (double?)p.Earning);
 
                 return new ResponsePackage<double>()
                 {
-                    Data = rowsBeforeNow.Sum(p => p.Earning),
+                    Data = totalEarnings ?? 0,
                     Message = "Successfully fetched weather data."
                 };
             }
             catch (Exception ex)
             {
-                return new ResponsePackage<double>() { Message = ex.Message };
+                return new ResponsePackage<double>() { Data = 0, Message = ex.Message };
             }
         }
 
-        public async Task<ResponsePackage<double>> GetCurrentTemp()
+        public async Task<ResponsePackage<double>> GetCurrentTemp(int panelId)
         {
             try
             {
                 DateTime now = DateTime.Now;
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
-                var resultForDateAndHour = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time.Date == today && p.Time.Hour == hourNow)
-                    .FirstOrDefaultAsync();
+                double resultForDateAndHour = await _dbContext.PanelWeatherHours
+            .Include(p => p.PanelWeather)
+            .ThenInclude(p => p.Panel)
+            .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                        p.PanelWeather.PanelId == panelId &&
+                        p.Time.Date == today &&
+                        p.Time.Hour == hourNow &&
+                        !p.IsDeleted).Select(p => p.Temperature).FirstOrDefaultAsync();
 
                 if (resultForDateAndHour == null)
                     return new ResponsePackage<double>()
@@ -155,17 +180,17 @@ namespace Sunergy.Business.Implemention
                     };
                 return new ResponsePackage<double>()
                 {
-                    Data = resultForDateAndHour.Temperature,
+                    Data = resultForDateAndHour,
                     Message = "Successfully fetched weather data."
                 };
             }
             catch (Exception ex)
             {
-                return new ResponsePackage<double>() { Message = ex.Message };
+                return new ResponsePackage<double>() { Data = 0, Message = ex.Message };
             }
         }
 
-        public async Task<ResponsePackage<double>> GetGeneratedPowerSum()
+        public async Task<ResponsePackage<double>> GetGeneratedPowerSum(int panelId)
         {
             try
             {
@@ -173,13 +198,15 @@ namespace Sunergy.Business.Implemention
                 DateTime today = now.Date;
                 int hourNow = now.Hour;
 
-                var rowsBeforeNow = await _dbContext.PanelWeatherHours
-                    .Where(p => p.Time <= now)
-                    .ToListAsync();
+                double? totalPower = await _dbContext.PanelWeatherHours
+            .Where(p => !p.PanelWeather.Panel.IsDeleted &&
+                        p.PanelWeather.PanelId == panelId &&
+                        p.Time <= now)
+            .SumAsync(p => (double?)p.Produced);
 
                 return new ResponsePackage<double>()
                 {
-                    Data = rowsBeforeNow.Sum(p => p.Produced),
+                    Data = totalPower ?? 0,
                     Message = "Successfully fetched weather data."
                 };
             }
@@ -571,9 +598,9 @@ namespace Sunergy.Business.Implemention
                 var result = await _dbContext.PowerPlants
                     .Where(p => p.UserId == userId)
                     .SelectMany(p => _dbContext.PanelWeathers
-                    .Where(pw => pw.PanelId == p.Id)
+                    .Where(pw => pw.PanelId == p.Id && !pw.Panel.IsDeleted)
                     .SelectMany(pw => _dbContext.PanelWeatherHours
-                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime)))
+                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime && !pwh.IsDeleted)))
                     .SumAsync(pwh => pwh.Produced);
                 return new ResponsePackage<double>() { Data = result, Message = "Successfuly fetched cumulated power." };
             }
@@ -591,9 +618,9 @@ namespace Sunergy.Business.Implemention
                 var result = await _dbContext.PowerPlants
                     .Where(p => p.UserId == userId)
                     .SelectMany(p => _dbContext.PanelWeathers
-                    .Where(pw => pw.PanelId == p.Id)
+                    .Where(pw => pw.PanelId == p.Id && !pw.Panel.IsDeleted)
                     .SelectMany(pw => _dbContext.PanelWeatherHours
-                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime)))
+                    .Where(pwh => pwh.PanelWeatherId == pw.Id && pwh.Time <= currentTime && !pwh.IsDeleted)))
                     .SumAsync(pwh => pwh.Earning);
                 return new ResponsePackage<double>() { Data = result, Message = "Successfuly fetched cumulated earned." };
             }

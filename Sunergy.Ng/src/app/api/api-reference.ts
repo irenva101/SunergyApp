@@ -52,7 +52,7 @@ export interface IClient {
     /**
      * @return Success
      */
-    delete(panelId: number): Observable<void>;
+    delete(panelId: number): Observable<StringResponsePackage>;
     /**
      * @return Success
      */
@@ -60,7 +60,7 @@ export interface IClient {
     /**
      * @return Success
      */
-    getById(id: number): Observable<void>;
+    getById(id: number): Observable<PanelInfoOutResponsePackage>;
     /**
      * @return Success
      */
@@ -102,29 +102,35 @@ export interface IClient {
      */
     getProfitWeather(dataIn: Date | undefined, id: number | undefined): Observable<ProfitWeatherDataOutResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentTemp(): Observable<DoubleResponsePackage>;
+    getCurrentTemp(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentClouds(): Observable<DoubleResponsePackage>;
+    getCurrentClouds(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getGeneratedPowerSum(): Observable<DoubleResponsePackage>;
+    getGeneratedPowerSum(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentPower(): Observable<DoubleResponsePackage>;
+    getCurrentPower(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentPrice(): Observable<DoubleResponsePackage>;
+    getCurrentPrice(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getGeneratedProfitSum(): Observable<DoubleResponsePackage>;
+    getGeneratedProfitSum(panelId: number | undefined): Observable<DoubleResponsePackage>;
     /**
      * @param userId (optional) 
      * @return Success
@@ -575,7 +581,7 @@ export class Client implements IClient {
     /**
      * @return Success
      */
-    delete(panelId: number): Observable<void> {
+    delete(panelId: number): Observable<StringResponsePackage> {
         let url_ = this.baseUrl + "/api/PowePlant/delete/{panelId}";
         if (panelId === undefined || panelId === null)
             throw new Error("The parameter 'panelId' must be defined.");
@@ -586,6 +592,7 @@ export class Client implements IClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Accept": "text/plain"
             })
         };
 
@@ -596,14 +603,14 @@ export class Client implements IClient {
                 try {
                     return this.processDelete(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<StringResponsePackage>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<StringResponsePackage>;
         }));
     }
 
-    protected processDelete(response: HttpResponseBase): Observable<void> {
+    protected processDelete(response: HttpResponseBase): Observable<StringResponsePackage> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -612,7 +619,21 @@ export class Client implements IClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StringResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -687,7 +708,7 @@ export class Client implements IClient {
     /**
      * @return Success
      */
-    getById(id: number): Observable<void> {
+    getById(id: number): Observable<PanelInfoOutResponsePackage> {
         let url_ = this.baseUrl + "/api/PowePlant/getById/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -698,6 +719,7 @@ export class Client implements IClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Accept": "text/plain"
             })
         };
 
@@ -708,14 +730,14 @@ export class Client implements IClient {
                 try {
                     return this.processGetById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<PanelInfoOutResponsePackage>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<PanelInfoOutResponsePackage>;
         }));
     }
 
-    protected processGetById(response: HttpResponseBase): Observable<void> {
+    protected processGetById(response: HttpResponseBase): Observable<PanelInfoOutResponsePackage> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -724,7 +746,21 @@ export class Client implements IClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PanelInfoOutResponsePackage.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = StringResponsePackage.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 500) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("Server Error", status, _responseText, _headers);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -1271,10 +1307,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentTemp(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getCurrentTemp";
+    getCurrentTemp(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getCurrentTemp?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1333,10 +1374,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentClouds(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getCurrentClouds";
+    getCurrentClouds(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getCurrentClouds?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1395,10 +1441,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getGeneratedPowerSum(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getGeneratedPowerSum";
+    getGeneratedPowerSum(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getGeneratedPowerSum?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1457,10 +1508,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentPower(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getCurrentPower";
+    getCurrentPower(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getCurrentPower?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1519,10 +1575,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getCurrentPrice(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getCurrentPrice";
+    getCurrentPrice(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getCurrentPrice?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1581,10 +1642,15 @@ export class Client implements IClient {
     }
 
     /**
+     * @param panelId (optional) 
      * @return Success
      */
-    getGeneratedProfitSum(): Observable<DoubleResponsePackage> {
-        let url_ = this.baseUrl + "/getGeneratedProfitSum";
+    getGeneratedProfitSum(panelId: number | undefined): Observable<DoubleResponsePackage> {
+        let url_ = this.baseUrl + "/getGeneratedProfitSum?";
+        if (panelId === null)
+            throw new Error("The parameter 'panelId' cannot be null.");
+        else if (panelId !== undefined)
+            url_ += "panelId=" + encodeURIComponent("" + panelId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2278,6 +2344,118 @@ export interface IPanelDtoListResponsePackage {
     status?: ResponseStatus;
     message?: string | undefined;
     data?: PanelDto[] | undefined;
+    statusCode?: number;
+}
+
+export class PanelInfoOut implements IPanelInfoOut {
+    name?: string | undefined;
+    installedPower?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+    created?: Date;
+    updated?: Date;
+    panelType?: PanelType;
+
+    constructor(data?: IPanelInfoOut) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.installedPower = _data["installedPower"];
+            this.efficiency = _data["efficiency"];
+            this.longitude = _data["longitude"];
+            this.latitude = _data["latitude"];
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.updated = _data["updated"] ? new Date(_data["updated"].toString()) : <any>undefined;
+            this.panelType = _data["panelType"];
+        }
+    }
+
+    static fromJS(data: any): PanelInfoOut {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelInfoOut();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["installedPower"] = this.installedPower;
+        data["efficiency"] = this.efficiency;
+        data["longitude"] = this.longitude;
+        data["latitude"] = this.latitude;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
+        data["panelType"] = this.panelType;
+        return data;
+    }
+}
+
+export interface IPanelInfoOut {
+    name?: string | undefined;
+    installedPower?: number | undefined;
+    efficiency?: number | undefined;
+    longitude?: number | undefined;
+    latitude?: number | undefined;
+    created?: Date;
+    updated?: Date;
+    panelType?: PanelType;
+}
+
+export class PanelInfoOutResponsePackage implements IPanelInfoOutResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelInfoOut;
+    statusCode?: number;
+
+    constructor(data?: IPanelInfoOutResponsePackage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PanelInfoOut.fromJS(_data["data"]) : <any>undefined;
+            this.statusCode = _data["statusCode"];
+        }
+    }
+
+    static fromJS(data: any): PanelInfoOutResponsePackage {
+        data = typeof data === 'object' ? data : {};
+        let result = new PanelInfoOutResponsePackage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["statusCode"] = this.statusCode;
+        return data;
+    }
+}
+
+export interface IPanelInfoOutResponsePackage {
+    status?: ResponseStatus;
+    message?: string | undefined;
+    data?: PanelInfoOut;
     statusCode?: number;
 }
 

@@ -77,7 +77,9 @@ namespace Sunergy.WebApp.Controllers
             return Ok(await _panelService.Save(dataIn, GetUserId().GetValueOrDefault()));
         }
         [HttpGet("delete/{panelId}")]
-        [AllowAnonymous]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Delete(int panelId)
         {
             return Ok(await _panelService.Delete(panelId));
@@ -105,7 +107,9 @@ namespace Sunergy.WebApp.Controllers
         }
 
         [HttpGet("getById/{id}")]
-        [AllowAnonymous]
+        [ProducesResponseType(typeof(ResponsePackage<PanelInfoOut>), 200)]
+        [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetById(int id)
         {
             return Ok(await _panelService.GetById(id, GetUserId().GetValueOrDefault(), GetUserRole().GetValueOrDefault()));

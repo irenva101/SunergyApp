@@ -9,12 +9,12 @@ namespace Sunergy.Business.Interface
         Task<ResponsePackageNoData> SetHistoryWeatherByPanelId(int panelId);
         Task<ResponsePackage<PowerWeatherDataOut>> GetPowerWeather(DateTime dataIn, int id);
         Task<ResponsePackage<ProfitWeatherDataOut>> GetProfitWeather(DateTime dataIn, int id);
-        Task<ResponsePackage<double>> GetCurrentTemp();
-        Task<ResponsePackage<double>> GetCurrentClouds();
-        Task<ResponsePackage<double>> GetGeneratedPowerSum();
-        Task<ResponsePackage<double>> GetCurrentPower();
-        Task<ResponsePackage<double>> GetCurrentPrice();
-        Task<ResponsePackage<double>> GetGeneratedProfitSum();
+        Task<ResponsePackage<double>> GetCurrentTemp(int panelId);
+        Task<ResponsePackage<double>> GetCurrentClouds(int panelId);
+        Task<ResponsePackage<double>> GetGeneratedPowerSum(int panelId);
+        Task<ResponsePackage<double>> GetCurrentPower(int panelId);
+        Task<ResponsePackage<double>> GetCurrentPrice(int panelId);
+        Task<ResponsePackage<double>> GetGeneratedProfitSum(int panelId);
         Task<ResponsePackage<double>> GetCumulativePower(int userId);
         Task<ResponsePackage<double>> GetCumulativeProfit(int userId);
 

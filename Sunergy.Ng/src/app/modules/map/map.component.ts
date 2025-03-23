@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, numberAttribute, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as L from 'leaflet';
 import { Client, PanelDto } from '../../api/api-reference';
@@ -89,9 +89,21 @@ export class MapComponent implements OnInit {
           });
 
           marker.on('click', () => {
-            this.selectedPanel=panel;
+            this.selectedPanel = panel;
           });
         });
+      },
+      error: (err) => {
+        this.toster.error(err);
+      },
+    });
+  }
+
+  deletePanel(id: number) {
+    this.client.delete(id).subscribe({
+      next: (response) => {
+        window.location.reload()
+        this.toster.success(response.message);
       },
       error: (err) => {
         this.toster.error(err);

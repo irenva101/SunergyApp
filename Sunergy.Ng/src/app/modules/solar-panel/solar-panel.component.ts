@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Client,
+  PanelInfoOut,
   PowerWeatherDataOut,
   ProfitWeatherDataOut,
 } from '../../api/api-reference';
@@ -41,6 +42,7 @@ export class SolarPanelComponent {
   currentPower: number | undefined;
   currentPrice: number | undefined;
   profitSum: number | undefined;
+  panel= new PanelInfoOut();
 
   public todayChartData: any;
   public yesterdayChartData: any;
@@ -554,6 +556,8 @@ export class SolarPanelComponent {
   //#region Oninit setup
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.getPanelById();
     // this.setForcastWeather();
     // this.setHistoryWeather();
 
@@ -574,9 +578,20 @@ export class SolarPanelComponent {
   }
   //#endregion
 
+  getPanelById(){
+    this.client.getById(this.id!).subscribe({
+      next: (response)=>{
+        this.panel=response.data!;
+      },
+      error: (err)=>{
+        this.toastr.error(err);
+      }
+    })
+  }
+
   //#region MainPower
   getCurrentTemp() {
-    this.client.getCurrentTemp().subscribe({
+    this.client.getCurrentTemp(this.id).subscribe({
       next: (response) => {
         this.currentTemp = response.data;
       },
@@ -587,7 +602,7 @@ export class SolarPanelComponent {
   }
 
   getCurrentCloudnes() {
-    this.client.getCurrentClouds().subscribe({
+    this.client.getCurrentClouds(this.id).subscribe({
       next: (response) => {
         this.currentCloudnes = response.data;
       },
@@ -598,7 +613,7 @@ export class SolarPanelComponent {
   }
 
   getGeneratedPowerSum() {
-    this.client.getGeneratedPowerSum().subscribe({
+    this.client.getGeneratedPowerSum(this.id).subscribe({
       next: (response) => {
         this.generatedPowerSum = response.data;
       },
@@ -612,7 +627,7 @@ export class SolarPanelComponent {
 
   //#region MainProfit
   getCurrentPower() {
-    this.client.getCurrentPower().subscribe({
+    this.client.getCurrentPower(this.id).subscribe({
       next: (response) => {
         this.currentPower = response.data;
       },
@@ -623,7 +638,7 @@ export class SolarPanelComponent {
   }
 
   getCurrentPrice() {
-    this.client.getCurrentPrice().subscribe({
+    this.client.getCurrentPrice(this.id).subscribe({
       next: (response) => {
         this.currentPrice = response.data;
       },
@@ -634,7 +649,7 @@ export class SolarPanelComponent {
   }
 
   getProfitSum() {
-    this.client.getGeneratedProfitSum().subscribe({
+    this.client.getGeneratedProfitSum(this.id).subscribe({
       next: (response) => {
         this.profitSum = response.data;
       },

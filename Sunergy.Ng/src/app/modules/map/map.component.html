@@ -1,39 +1,30 @@
 <div id="map" style="height: 60vh; margin: 2rem 6rem 2rem 6rem; border-radius: 1rem;"></div>
 @if(selectedPanel){
-  <div class="container-fluid g-0 d-flex align-items-center justify-content-center">
-    <div class="row g-0 info-contaner p-5 mb-5">
-      <div class="row g-0">
-        <div class="col g-0">
-          <span class="label-style bold-text">IME:
-          </span>
+  <div class="container-fluid d-flex align-items-center justify-content-center">
+    <div class="row info-container p-4 mb-5">
+      <div class="row mb-3">
+        <div class="col">
+          <h5 class="panel-title">Detalji solarnog panela</h5>
         </div>
-        <div class="col g-0">
-          <span>{{ selectedPanel.name ? selectedPanel.name : "/"  }}</span>
-        </div>
-      </div>
-      <div class="row g-0">
-        <div class="col g-0">
-          <span class="label-style bold-text">EFIKASNOST:</span>
-        </div>
-        <div class="col g-0">
-          <span>{{ selectedPanel.efficiency ? selectedPanel.efficiency : "/" }}</span>
+        <div class="col-auto">
+          <button class="btn btn-danger btn-sm" (click)="deletePanel(selectedPanel.id!)">🗑 Obriši</button>
         </div>
       </div>
-      <div class="row g-0">
-        <div class="col g-0">
-          <span class="label-style bold-text">GEOGRAFSKA ŠIRINA:</span>
-        </div>
-        <div class="col g-0">
-          <span>{{ selectedPanel.longitude ? selectedPanel.longitude : "/" }}</span>
-        </div>
+      <div class="row info-row">
+        <div class="col label-style">IME:</div>
+        <div class="col">{{ selectedPanel.name ? selectedPanel.name : "/" }}</div>
       </div>
-      <div class="row g-0">
-        <div class="col g-0">
-          <span class="label-style bold-text">GEOGRAFSKA DUŽINA:</span>
-        </div>
-        <div class="col g-0">
-          <span>{{ selectedPanel.latitude ? selectedPanel.latitude : "/" }}</span>
-        </div>
+      <div class="row info-row">
+        <div class="col label-style">EFIKASNOST:</div>
+        <div class="col">{{ selectedPanel.efficiency ? selectedPanel.efficiency : "/" }}%</div>
+      </div>
+      <div class="row info-row">
+        <div class="col label-style">GEOGRAFSKA ŠIRINA:</div>
+        <div class="col">{{ selectedPanel.longitude ? selectedPanel.longitude : "/" }}</div>
+      </div>
+      <div class="row info-row">
+        <div class="col label-style">GEOGRAFSKA DUŽINA:</div>
+        <div class="col">{{ selectedPanel.latitude ? selectedPanel.latitude : "/" }}</div>
       </div>
     </div>
   </div>

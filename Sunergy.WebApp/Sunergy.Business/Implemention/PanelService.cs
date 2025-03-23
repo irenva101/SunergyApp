@@ -68,10 +68,26 @@ namespace Sunergy.Business.Implemention
         public async Task<ResponsePackageNoData> Delete(int panelId)
         {
             var powerPlant = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => x.IsDeleted == false && x.Id == panelId);
-            if (powerPlant != null)
+            if (powerPlant == null)
             {
                 return new ResponsePackageNoData(ResponseStatus.BadRequest, "Panel with given email doesn't exist.");
             }
+
+            var panelWeathers = await _dbContext.PanelWeathers.Where(pw => pw.Id == panelId).ToListAsync();
+
+            if (panelWeathers.Any())
+            {
+                var panelWeatherIds = panelWeathers.Select(pw => pw.Id).ToList();
+
+                // Brisanje povezanih podataka iz PanelWeatherHours
+                var panelWeatherHours = await _dbContext.PanelWeatherHours
+                    .Where(pwh => panelWeatherIds.Contains(pwh.Id))
+                    .ToListAsync();
+
+                _dbContext.PanelWeatherHours.RemoveRange(panelWeatherHours);
+                _dbContext.PanelWeathers.RemoveRange(panelWeathers);
+            }
+
             powerPlant.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
             return new ResponsePackageNoData(ResponseStatus.OK, "Panel deleted succesfully");
@@ -80,7 +96,7 @@ namespace Sunergy.Business.Implemention
 
         public async Task<ResponsePackage<List<PanelAdministratorDataOut>>> GetAllPanels()
         {
-            var panels = await _dbContext.PowerPlants.Include(p => p.User).ToListAsync();
+            var panels = await _dbContext.PowerPlants.Where(p => !p.IsDeleted).ToListAsync();
             if (panels == null || panels.Count == 0)
             {
                 return new ResponsePackage<List<PanelAdministratorDataOut>>()
@@ -159,7 +175,7 @@ namespace Sunergy.Business.Implemention
 
         public async Task<ResponsePackage<List<PanelDto>>> Query(int? userId, Role? role)
         {
-            var allPanels = _dbContext.PowerPlants.Where(x => x.IsDeleted == false);
+            var allPanels = _dbContext.PowerPlants.Where(x => !x.IsDeleted);
 
             if (role != null && role == Role.User)
                 allPanels = allPanels.Where(x => x.UserId == userId);
@@ -179,7 +195,7 @@ namespace Sunergy.Business.Implemention
         {
             if (dataIn != null && dataIn.Id != 0)
             {
-                var user = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => x.IsDeleted == false && x.Id == userId);
+                var user = await _dbContext.PowerPlants.FirstOrDefaultAsync(x => !x.IsDeleted && x.Id == userId);
 
                 user.InstalledPower = dataIn.InstalledPower;
                 user.Efficiency = dataIn.Efficiency;

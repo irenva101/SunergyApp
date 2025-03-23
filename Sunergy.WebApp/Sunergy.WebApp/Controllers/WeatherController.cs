@@ -74,9 +74,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetCurrentTemp()
+        public async Task<IActionResult> GetCurrentTemp(int panelId)
         {
-            var result = await _weatherService.GetCurrentTemp();
+            var result = await _weatherService.GetCurrentTemp(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch current temperature.");
@@ -88,9 +88,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetCurrentClouds()
+        public async Task<IActionResult> GetCurrentClouds(int panelId)
         {
-            var result = await _weatherService.GetCurrentClouds();
+            var result = await _weatherService.GetCurrentClouds(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch current clouds.");
@@ -102,9 +102,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetGeneratedPowerSum()
+        public async Task<IActionResult> GetGeneratedPowerSum(int panelId)
         {
-            var result = await _weatherService.GetGeneratedPowerSum();
+            var result = await _weatherService.GetGeneratedPowerSum(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch generated power sum.");
@@ -116,9 +116,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetCurrentPower()
+        public async Task<IActionResult> GetCurrentPower(int panelId)
         {
-            var result = await _weatherService.GetCurrentPower();
+            var result = await _weatherService.GetCurrentPower(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch current power.");
@@ -130,9 +130,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetCurrentPrice()
+        public async Task<IActionResult> GetCurrentPrice(int panelId)
         {
-            var result = await _weatherService.GetCurrentPrice();
+            var result = await _weatherService.GetCurrentPrice(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch current price.");
@@ -144,9 +144,9 @@ namespace Sunergy.WebApp.Controllers
         [ProducesResponseType(typeof(ResponsePackage<double>), 200)]
         [ProducesResponseType(typeof(ResponsePackage<string>), 400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetGeneratedProfitSum()
+        public async Task<IActionResult> GetGeneratedProfitSum(int panelId)
         {
-            var result = await _weatherService.GetGeneratedProfitSum();
+            var result = await _weatherService.GetGeneratedProfitSum(panelId);
             if (result == null)
             {
                 return StatusCode((int)Response.StatusCode, $"Failed to fetch generated profit sum.");
@@ -181,6 +181,7 @@ namespace Sunergy.WebApp.Controllers
             }
             return Ok(result);
         }
+
 
     }
 }
