@@ -13,8 +13,24 @@ input:-webkit-autofill:active {
 input[type="text"].ng-dirty.ng-touched,
 input[type="password"].ng-dirty.ng-touched,
 input[type="number"].ng-dirty.ng-touched,
-input[type="email"].ng-dirty.ng-touched {
+input[type="email"].ng-dirty.ng-touched,
+select.ng-dirty.ng-touched{
   background-color: rgb(248, 247, 216);
+}
+
+select {
+  width: 100%;
+  border-radius: 12px;
+  padding-left: 2%;
+  padding-right: 2%;
+  height: 44px;
+  font-size: 16px;
+  border: 1px solid rgb(233, 233, 216);
+  background-color: white;
+  font-weight: 500;
+  appearance: none; /* Uklanja default stilove browsera */
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 input[type="text"],
@@ -43,7 +59,9 @@ input[type="password"] {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-input[type="email"]:focus {
+input[type="email"]:focus,
+select:focus {
   border: 2px solid #feeb46 !important; /* Žuta boja za border */
   box-shadow: none !important; /* Isključuje plavi box-shadow */
+  outline: none;
 }

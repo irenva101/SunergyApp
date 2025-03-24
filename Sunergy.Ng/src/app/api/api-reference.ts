@@ -2719,6 +2719,7 @@ export class RegisterDataIn implements IRegisterDataIn {
     password?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    role?: Role;
 
     constructor(data?: IRegisterDataIn) {
         if (data) {
@@ -2735,6 +2736,7 @@ export class RegisterDataIn implements IRegisterDataIn {
             this.password = _data["password"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.role = _data["role"];
         }
     }
 
@@ -2751,6 +2753,7 @@ export class RegisterDataIn implements IRegisterDataIn {
         data["password"] = this.password;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["role"] = this.role;
         return data;
     }
 }
@@ -2760,6 +2763,7 @@ export interface IRegisterDataIn {
     password?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    role?: Role;
 }
 
 export enum ResponseStatus {

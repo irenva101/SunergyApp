@@ -56,7 +56,7 @@ namespace Sunergy.WebApp.Controllers
                 Email = dataIn.Email,
                 FirstName = dataIn.FirstName,
                 LastName = dataIn.LastName,
-                Role = Role.User
+                Role = dataIn.Role,
             });
             return Ok(ret);
         }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Client, RegisterDataIn } from '../../api/api-reference';
+import { Client, RegisterDataIn, Role } from '../../api/api-reference';
 import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
@@ -14,6 +14,11 @@ import { Router, RouterLink } from '@angular/router';
 export class RegisterComponent {
   data: RegisterDataIn = new RegisterDataIn();
   constructor(private client: Client, private toastr: ToastrService, private router: Router,) {}
+  Role=Role;
+
+  roles: Role[] = Object.keys(Role)
+    .filter((key) => isNaN(Number(key)))
+    .map((key) => Role[key as keyof typeof Role]);
 
   onSubmit() {
     this.client.register(this.data).subscribe({

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Client, PanelDto } from '../api/api-reference';
+import { Client, PanelDto, Role } from '../api/api-reference';
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -17,6 +17,8 @@ export class HomeComponent implements OnInit {
   private jwtService = new JwtHelperService();
   cumulativePower: number | undefined;
   cumulativeProfit: number | undefined;
+  Role=Role;
+  role: any;
 
   constructor(private client: Client, private toastr: ToastrService) {
     this.reloadTable();
@@ -26,6 +28,7 @@ export class HomeComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = this.jwtService.decodeToken(token);
+      this.role=decodedToken.role;
       const userId = decodedToken.id;
       this.getCumulativePower(userId);
       this.getCumulativeProfit(userId);

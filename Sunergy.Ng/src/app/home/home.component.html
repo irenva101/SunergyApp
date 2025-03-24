@@ -1,4 +1,5 @@
 <div class="container g-0 pt-5">
+  @if(role!==Role.Guest){
   <div class="row-md-12 d-flex pb-2 pt-3">
     <div class="col-md-12 g-0">
       <div class="col d-flex justify-content-center bold-text">
@@ -6,15 +7,17 @@
       </div>
     </div>
   </div>
+
   <div class="row-md-12 d-flex justify-content-between p-4 first-block">
     <div class="col-md-3 g-0">
       <div class="col d-flex justify-content-center pb-2 bold-text">
         UKUPNO IZGENERISANA SNAGA
       </div>
       <div class="col d-flex justify-content-center box-generated-sum p-3">
-       {{cumulativePower | number: '1.2-2' }} W
+        {{ cumulativePower | number : "1.2-2" }} W
       </div>
     </div>
+
     <div class="col-md-3 g-0">
       <div class="col d-flex justify-content-center pb-2 bold-text">
         BROJ ELEKTRANA
@@ -28,10 +31,11 @@
         OSTVARENI PROFIT
       </div>
       <div class="col d-flex justify-content-center box-earned-sum p-3">
-        {{cumulativeProfit | currency: 'EUR':'symbol':'1.2-2' }}
+        {{ cumulativeProfit | currency : "EUR" : "symbol" : "1.2-2" }}
       </div>
     </div>
   </div>
+  }
   <div class="row-md-12 d-flex pt-5 pb-2">
     <div class="col-md-12 g-0">
       <div class="col d-flex justify-content-center bold-text">ELEKTRANE</div>
@@ -39,7 +43,10 @@
   </div>
   <div class="d-flex flex-wrap justify-content-center gap-5 second-block p-5">
     @for(item of data; track item.id){
-    <div class="col-md-3 d-flex justify-content-center box-panel p-5" [routerLink]="['/solar-panel', item.id]">
+    <div
+      class="col-md-3 d-flex justify-content-center box-panel p-5"
+      [routerLink]="['/solar-panel', item.id]"
+    >
       {{ item.name }}
     </div>
     }

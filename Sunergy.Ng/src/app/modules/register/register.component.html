@@ -44,6 +44,21 @@
           </div>
         </div>
         <div class="mb-3">
+          <label id="role" class="form-label">
+            Role
+          </label>
+          <select 
+          id="role"
+          [(ngModel)]="data.role"
+          name="role"
+          #role="ngModel"
+          required>
+            <option *ngFor="let item of roles">
+              {{item}}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
           <label id="password" class="form-label">Password</label>
           <input
             type="password"
